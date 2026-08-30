@@ -95,7 +95,7 @@ Accent colors carry product meaning and interaction. No generic purple/blue SaaS
 - Structure: compact globe-and-language summary opening a two-column list of native language names.
 - States: current locale marked with `aria-current`, hover, focus.
 - Accessibility: native language names and a localized group label.
-- Behavior: selection is remembered locally; no automatic redirect is allowed.
+- Behavior: selection is remembered locally and overrides browser preferences. On the English root only, a first-time visitor is routed to a supported browser locale; unsupported locales fall back to English. Direct localized routes never redirect automatically.
 
 ## 6. Motion & Interaction
 

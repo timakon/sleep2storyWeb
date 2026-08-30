@@ -1200,6 +1200,10 @@ p {
   font-size: clamp(68px, 6.5vw, 100px);
 }
 
+.v3:lang(tr) .v3-copy h1 {
+  font-size: clamp(64px, 6vw, 92px);
+}
+
 .v3-copy .lead {
   max-width: 570px;
   margin-top: 42px;
@@ -1401,6 +1405,12 @@ p {
   text-transform: uppercase;
   overflow-wrap: anywhere;
   hyphens: auto;
+}
+
+.v3:lang(de) .inside-head h2 {
+  font-size: clamp(48px, 5vw, 72px);
+  overflow-wrap: normal;
+  hyphens: manual;
 }
 
 .inside-head > p:last-child {
@@ -1948,9 +1958,16 @@ p {
     padding-inline: 10px;
   }
 
-  .v3:lang(nl) .v3-copy h1,
-  .v3:lang(tr) .v3-copy h1 {
+  .v3:lang(nl) .v3-copy h1 {
     font-size: clamp(58px, 18vw, 90px);
+  }
+
+  .v3:lang(tr) .v3-copy h1 {
+    font-size: clamp(44px, 12.5vw, 64px);
+  }
+
+  .v3:lang(en) .v3-how h2 {
+    font-size: clamp(46px, 13vw, 54px);
   }
 
   .v3:lang(de) .v3-copy h1 {
@@ -1958,11 +1975,20 @@ p {
   }
 
   .v3:lang(de) .v3-how h2,
-  .v3:lang(de) .inside-head h2,
   .v3:lang(de) .v3-consent h2,
   .v3:lang(de) .v3-end h2 {
     font-size: clamp(42px, 12vw, 54px);
     hyphens: auto;
+  }
+
+  .v3:lang(de) .inside-head h2 {
+    font-size: clamp(34px, 9vw, 42px);
+  }
+
+  .v3:lang(sr) .v3-consent h2 {
+    font-size: clamp(38px, 11vw, 48px);
+    overflow-wrap: normal;
+    hyphens: manual;
   }
 
   .v1-copy .lead,
