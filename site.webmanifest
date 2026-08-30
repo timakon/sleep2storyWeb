@@ -1,0 +1,17 @@
+{
+  "name": "Sleep2Story",
+  "short_name": "Sleep2Story",
+  "description": "Сказки на ночь голосом вашей семьи",
+  "lang": "ru",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fff8f4",
+  "theme_color": "#fff8f4",
+  "icons": [
+    {
+      "src": "assets/app-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
