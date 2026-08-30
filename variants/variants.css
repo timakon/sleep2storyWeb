@@ -1175,13 +1175,15 @@ p {
 
 .v3-copy h1 {
   margin-top: 28px;
-  font-size: clamp(76px, 9.8vw, 148px);
+  font-size: clamp(64px, 7vw, 112px);
   font-weight: 880;
   letter-spacing: -0.085em;
   line-height: 0.78;
   text-transform: uppercase;
-  overflow-wrap: anywhere;
-  hyphens: auto;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
+  text-wrap: balance;
 }
 
 .v3-copy h1 span {
@@ -1323,13 +1325,15 @@ p {
 }
 
 .v3-how h2 {
-  font-size: clamp(64px, 8vw, 116px);
+  font-size: clamp(56px, 7vw, 96px);
   font-weight: 880;
   letter-spacing: -0.08em;
   line-height: 0.88;
   text-transform: uppercase;
-  overflow-wrap: anywhere;
-  hyphens: auto;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
+  text-wrap: balance;
 }
 
 .v3-how ol {
@@ -1361,12 +1365,13 @@ p {
 
 .tile h3 {
   margin-top: auto;
-  font-size: clamp(42px, 4.5vw, 68px);
+  font-size: clamp(36px, 3.5vw, 54px);
   font-weight: 880;
   letter-spacing: -0.065em;
   text-transform: uppercase;
-  overflow-wrap: anywhere;
-  hyphens: auto;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
 }
 
 .tile p {
@@ -1398,19 +1403,15 @@ p {
 
 .inside-head h2 {
   margin-top: 28px;
-  font-size: clamp(60px, 7.2vw, 106px);
+  font-size: clamp(44px, 5vw, 68px);
   font-weight: 880;
   letter-spacing: -0.08em;
   line-height: 0.88;
   text-transform: uppercase;
-  overflow-wrap: anywhere;
-  hyphens: auto;
-}
-
-.v3:lang(de) .inside-head h2 {
-  font-size: clamp(48px, 5vw, 72px);
   overflow-wrap: normal;
-  hyphens: manual;
+  word-break: normal;
+  hyphens: none;
+  text-wrap: balance;
 }
 
 .inside-head > p:last-child {
@@ -1456,11 +1457,15 @@ p {
 .v3-proof h2 {
   max-width: 1100px;
   margin-top: 24px;
-  font-size: clamp(58px, 7.2vw, 104px);
+  font-size: clamp(48px, 6vw, 88px);
   font-weight: 880;
   letter-spacing: -0.075em;
   line-height: 0.92;
   text-transform: uppercase;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
+  text-wrap: balance;
 }
 
 .proof-line {
@@ -1512,13 +1517,15 @@ p {
 
 .v3-consent h2 {
   margin-top: 26px;
-  font-size: clamp(58px, 7vw, 102px);
+  font-size: clamp(46px, 5.5vw, 80px);
   font-weight: 880;
   letter-spacing: -0.08em;
   line-height: 0.9;
   text-transform: uppercase;
-  overflow-wrap: anywhere;
-  hyphens: auto;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
+  text-wrap: balance;
 }
 
 .v3-consent > div:last-child {
@@ -1538,11 +1545,15 @@ p {
 
 .v3-faq h2 {
   margin-bottom: 44px;
-  font-size: clamp(56px, 7vw, 98px);
+  font-size: clamp(48px, 6vw, 82px);
   font-weight: 880;
   letter-spacing: -0.08em;
   line-height: 0.9;
   text-transform: uppercase;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
+  text-wrap: balance;
 }
 
 .v3-faq details {
@@ -1577,13 +1588,15 @@ p {
 .v3-end h2 {
   max-width: 1200px;
   margin-top: 28px;
-  font-size: clamp(62px, 8vw, 116px);
+  font-size: clamp(50px, 6.5vw, 92px);
   font-weight: 880;
   letter-spacing: -0.08em;
   line-height: 0.9;
   text-transform: uppercase;
-  overflow-wrap: anywhere;
-  hyphens: auto;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
+  text-wrap: balance;
 }
 
 .v3-end .button-ink {
@@ -1871,7 +1884,7 @@ p {
   }
 
   .v3-copy h1 {
-    font-size: clamp(66px, 20vw, 104px);
+    font-size: clamp(56px, 13vw, 88px);
   }
 
   .v3-stage {
@@ -1958,37 +1971,39 @@ p {
     padding-inline: 10px;
   }
 
-  .v3:lang(nl) .v3-copy h1 {
-    font-size: clamp(58px, 18vw, 90px);
+  .v3-copy h1 {
+    font-size: clamp(40px, 13vw, 58px);
   }
 
-  .v3:lang(tr) .v3-copy h1 {
-    font-size: clamp(44px, 12.5vw, 64px);
+  .v3-how h2,
+  .v3-proof h2,
+  .v3-faq h2,
+  .v3-end h2 {
+    font-size: clamp(38px, 11vw, 48px);
   }
 
-  .v3:lang(en) .v3-how h2 {
-    font-size: clamp(46px, 13vw, 54px);
+  .inside-head h2 {
+    font-size: clamp(36px, 10vw, 44px);
+  }
+
+  .v3-consent h2 {
+    font-size: clamp(34px, 10vw, 42px);
   }
 
   .v3:lang(de) .v3-copy h1 {
-    font-size: clamp(42px, 11.8vw, 58px);
+    font-size: clamp(32px, 10.5vw, 40px);
   }
 
-  .v3:lang(de) .v3-how h2,
-  .v3:lang(de) .v3-consent h2,
+  .v3:lang(de) .v3-how h2 {
+    font-size: clamp(32px, 10vw, 38px);
+  }
+
+  .v3:lang(tr) .v3-copy h1 {
+    font-size: clamp(36px, 12vw, 48px);
+  }
+
   .v3:lang(de) .v3-end h2 {
-    font-size: clamp(42px, 12vw, 54px);
-    hyphens: auto;
-  }
-
-  .v3:lang(de) .inside-head h2 {
-    font-size: clamp(34px, 9vw, 42px);
-  }
-
-  .v3:lang(sr) .v3-consent h2 {
-    font-size: clamp(38px, 11vw, 48px);
-    overflow-wrap: normal;
-    hyphens: manual;
+    font-size: clamp(26px, 8vw, 32px);
   }
 
   .v1-copy .lead,
@@ -2080,8 +2095,7 @@ p {
 
   .v3-proof h2,
   .v3-faq h2 {
-    font-size: clamp(44px, 13vw, 56px);
-    overflow-wrap: anywhere;
+    overflow-wrap: normal;
   }
 
   .proof-line span {

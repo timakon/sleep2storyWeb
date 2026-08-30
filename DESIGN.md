@@ -46,6 +46,7 @@ Accent colors carry product meaning and interaction. No generic purple/blue SaaS
 - Product wordmark: Fraunces, Georgia, serif.
 - Expressive Cyrillic/Latin italic: Georgia, Times New Roman, serif.
 - Body text never falls below 14px. German labels may wrap; controls expand rather than clip.
+- Display headings wrap only at word boundaries; responsive type scales down before a word can overflow or split mid-word.
 
 ## 4. Spacing & Layout
 
