@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://sleep2story.app/sitemap.xml
+Sitemap: https://sleep2story.com/sitemap.xml

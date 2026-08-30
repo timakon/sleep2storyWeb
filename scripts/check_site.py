@@ -24,7 +24,7 @@ import xml.etree.ElementTree as ET
 
 
 LOCALES = ("en", "ru", "de")
-SITE_URL = "https://sleep2story.app"
+SITE_URL = "https://sleep2story.com"
 
 
 @dataclass(slots=True)
@@ -88,7 +88,7 @@ def parse_page(path: Path) -> PageFacts:
 
 def local_path(output: Path, url: str) -> Path | None:
     parts = urlsplit(url)
-    if parts.netloc and parts.netloc != "sleep2story.app":
+    if parts.netloc and parts.netloc != "sleep2story.com":
         return None
     path = parts.path
     if not path.startswith("/"):
