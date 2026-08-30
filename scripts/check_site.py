@@ -23,12 +23,33 @@ from urllib.parse import urlsplit
 import xml.etree.ElementTree as ET
 
 
-LOCALES = ("en", "ru", "de")
+LOCALES = (
+    "en",
+    "ru",
+    "de",
+    "uk",
+    "pl",
+    "sr",
+    "fr",
+    "es",
+    "it",
+    "pt",
+    "nl",
+    "cs",
+    "ro",
+    "tr",
+)
 SITE_URL = "https://sleep2story.com"
 
 
-@dataclass(slots=True)
+def locale_path(locale: str) -> str:
+    return "/" if locale == "en" else f"/{locale}/"
+
+
+@dataclass(slots=True)  # noqa: MUTABLE_OK
 class PageFacts:
+    """Mutable accumulator populated by the streaming HTML parser."""
+
     language: str = ""
     title: str = ""
     description: str = ""
@@ -106,37 +127,41 @@ def assert_local_targets(output: Path, facts: PageFacts) -> None:
 
 def check(output: Path) -> None:
     expected_alternates = {
-        **{locale: f"{SITE_URL}/{locale}/" for locale in LOCALES},
+        **{locale: f"{SITE_URL}{locale_path(locale)}" for locale in LOCALES},
         "x-default": f"{SITE_URL}/",
     }
+    expected_locale_links = {locale: locale_path(locale) for locale in LOCALES}
 
     for locale in LOCALES:
-        page_path = output / locale / "index.html"
-        assert page_path.is_file(), f"Missing route /{locale}/"
+        route = locale_path(locale)
+        page_path = output / "index.html" if locale == "en" else output / locale / "index.html"
+        assert page_path.is_file(), f"Missing route {route}"
         source = page_path.read_text(encoding="utf-8")
-        assert "{{" not in source, f"Unresolved template token in /{locale}/"
+        assert "{{" not in source, f"Unresolved template token in {route}"
 
         facts = parse_page(page_path)
         assert facts.language == locale
         assert facts.title.strip()
         assert facts.description.strip()
-        assert facts.canonical == f"{SITE_URL}/{locale}/"
+        assert facts.canonical == f"{SITE_URL}{route}"
         assert facts.og_image == f"{SITE_URL}/assets/og-{locale}.jpg"
         assert facts.hreflang == expected_alternates
-        assert (f"/{locale}/#how", "") in facts.links
-        assert all(
-            not href.startswith(f"/{other}/")
-            for other in LOCALES
-            if other != locale
+        assert {
+            switched_locale: href
             for href, switched_locale in facts.links
-            if not switched_locale
+            if switched_locale
+        } == expected_locale_links
+        assert (f"{route}#how", "") in facts.links
+        assert all(
+            href.startswith(f"{route}#")
+            for href, switched_locale in facts.links
+            if href.startswith("/") and not switched_locale
         )
         assert_local_targets(output, facts)
 
-    root_facts = parse_page(output / "index.html")
-    assert root_facts.canonical == f"{SITE_URL}/"
-    assert root_facts.hreflang == expected_alternates
-    assert_local_targets(output, root_facts)
+    english_redirect = (output / "en" / "index.html").read_text(encoding="utf-8")
+    assert 'name="robots" content="noindex"' in english_redirect
+    assert 'rel="canonical" href="https://sleep2story.com/"' in english_redirect
 
     sitemap = ET.parse(output / "sitemap.xml").getroot()
     namespace = {
@@ -144,7 +169,7 @@ def check(output: Path) -> None:
         "xhtml": "http://www.w3.org/1999/xhtml",
     }
     urls = {node.text for node in sitemap.findall("s:url/s:loc", namespace)}
-    assert urls == {f"{SITE_URL}/{locale}/" for locale in LOCALES}
+    assert urls == {f"{SITE_URL}{locale_path(locale)}" for locale in LOCALES}
     for entry in sitemap.findall("s:url", namespace):
         alternates = {
             link.attrib["hreflang"]: link.attrib["href"]

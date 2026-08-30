@@ -26,9 +26,27 @@ from typing import Final
 
 ROOT: Final = Path(__file__).resolve().parent.parent
 SITE_URL: Final = "https://sleep2story.com"
-LOCALES: Final = ("en", "ru", "de")
-OG_LOCALES: Final = {"en": "en_US", "ru": "ru_RU", "de": "de_DE"}
-NAV_LABELS: Final = {"en": "Primary navigation", "ru": "Основная навигация", "de": "Hauptnavigation"}
+LOCALES: Final = (
+    "en", "ru", "de", "uk", "pl", "sr", "fr", "es", "it", "pt", "nl", "cs", "ro", "tr",
+)
+LOCALE_NAMES: Final = {
+    "en": "English", "ru": "Русский", "de": "Deutsch", "uk": "Українська",
+    "pl": "Polski", "sr": "Srpski", "fr": "Français", "es": "Español",
+    "it": "Italiano", "pt": "Português", "nl": "Nederlands", "cs": "Čeština",
+    "ro": "Română", "tr": "Türkçe",
+}
+OG_LOCALES: Final = {
+    "en": "en_US", "ru": "ru_RU", "de": "de_DE", "uk": "uk_UA", "pl": "pl_PL",
+    "sr": "sr_RS", "fr": "fr_FR", "es": "es_ES", "it": "it_IT", "pt": "pt_PT",
+    "nl": "nl_NL", "cs": "cs_CZ", "ro": "ro_RO", "tr": "tr_TR",
+}
+NAV_LABELS: Final = {
+    "en": "Primary navigation", "ru": "Основная навигация", "de": "Hauptnavigation",
+    "uk": "Основна навігація", "pl": "Główna nawigacja", "sr": "Glavna navigacija",
+    "fr": "Navigation principale", "es": "Navegación principal", "it": "Navigazione principale",
+    "pt": "Navegação principal", "nl": "Hoofdnavigatie", "cs": "Hlavní navigace",
+    "ro": "Navigare principală", "tr": "Ana gezinme",
+}
 TOKEN_PATTERN: Final = re.compile(r"{{([a-z0-9_.-]+)}}")
 
 
@@ -52,9 +70,13 @@ def load_copy(locale: str) -> dict[str, str]:
     return values
 
 
+def locale_path(locale: str) -> str:
+    return "/" if locale == "en" else f"/{locale}/"
+
+
 def alternate_urls() -> dict[str, str]:
     return {
-        **{locale: f"{SITE_URL}/{locale}/" for locale in LOCALES},
+        **{locale: f"{SITE_URL}{locale_path(locale)}" for locale in LOCALES},
         "x-default": f"{SITE_URL}/",
     }
 
@@ -67,19 +89,18 @@ def hreflang_links() -> str:
 
 
 def locale_links(current: str) -> str:
-    labels = {"en": "English", "ru": "Русский", "de": "Deutsch"}
     links: list[str] = []
     for locale in LOCALES:
         current_attribute = ' aria-current="page"' if locale == current else ""
         links.append(
-            f'          <a href="/{locale}/" lang="{locale}" data-locale="{locale}"'
-            f"{current_attribute}>{labels[locale]}</a>"
+            f'            <a href="{locale_path(locale)}" lang="{locale}" data-locale="{locale}"'
+            f"{current_attribute}>{LOCALE_NAMES[locale]}</a>"
         )
     return "\n".join(links)
 
 
 def structured_data(locale: str, copy: dict[str, str]) -> str:
-    page_url = f"{SITE_URL}/{locale}/"
+    page_url = f"{SITE_URL}{locale_path(locale)}"
     graph = {
         "@context": "https://schema.org",
         "@graph": [
@@ -148,7 +169,7 @@ def write_sitemap(output: Path) -> None:
         for language, url in alternate_urls().items()
     )
     entries = "\n".join(
-        f"  <url>\n    <loc>{SITE_URL}/{locale}/</loc>\n{alternates}\n  </url>"
+        f"  <url>\n    <loc>{SITE_URL}{locale_path(locale)}</loc>\n{alternates}\n  </url>"
         for locale in LOCALES
     )
     sitemap = (
@@ -170,7 +191,8 @@ def build(output: Path) -> None:
             extra = sorted(set(copy) - english_keys)
             raise BuildError(f"Translation parity failed for {locale}: missing={missing}, extra={extra}")
 
-    output.mkdir(parents=True, exist_ok=True)
+    shutil.rmtree(output, ignore_errors=True)
+    output.mkdir(parents=True)
     shutil.copytree(ROOT / "assets", output / "assets", dirs_exist_ok=True)
     shutil.copy2(ROOT / "favicon.ico", output / "favicon.ico")
     shutil.copy2(ROOT / "assets" / "site.js", output / "assets" / "site.js")
@@ -191,16 +213,19 @@ def build(output: Path) -> None:
     template = (ROOT / "site" / "home.template.html").read_text(encoding="utf-8")
     alternates = hreflang_links()
     for locale, copy in copies.items():
-        locale_dir = output / locale
+        route = locale_path(locale)
+        locale_dir = output if locale == "en" else output / locale
         locale_dir.mkdir(parents=True, exist_ok=True)
         page = render(
             template,
             copy,
             {
                 "locale": locale,
-                "canonical_url": f"{SITE_URL}/{locale}/",
+                "locale_path": route,
+                "canonical_url": f"{SITE_URL}{route}",
                 "hreflang_links": alternates,
                 "locale_links": locale_links(locale),
+                "locale_code": locale.upper(),
                 "og_locale": OG_LOCALES[locale],
                 "nav_label": NAV_LABELS[locale],
                 "stage_sticker": escape(copy["stage.sticker"]).replace("\n", "<br />"),
@@ -214,7 +239,7 @@ def build(output: Path) -> None:
             "short_name": "Sleep2Story",
             "description": copy["manifest.description"],
             "lang": locale,
-            "start_url": f"/{locale}/",
+            "start_url": route,
             "display": "standalone",
             "background_color": "#fff8f4",
             "theme_color": "#fff8f4",
@@ -231,9 +256,13 @@ def build(output: Path) -> None:
             encoding="utf-8",
         )
 
-    root_template = (ROOT / "site" / "root.template.html").read_text(encoding="utf-8")
-    (output / "index.html").write_text(
-        root_template.replace("{{hreflang_links}}", alternates).replace("{{styles}}", css),
+    english_redirect = output / "en"
+    english_redirect.mkdir()
+    (english_redirect / "index.html").write_text(
+        '<!doctype html><html lang="en"><head><meta charset="utf-8">'
+        '<meta name="robots" content="noindex"><link rel="canonical" href="https://sleep2story.com/">'
+        '<meta http-equiv="refresh" content="0;url=/"><title>Sleep2Story</title></head>'
+        '<body><a href="/">Continue to Sleep2Story</a></body></html>\n',
         encoding="utf-8",
     )
     (output / "robots.txt").write_text(

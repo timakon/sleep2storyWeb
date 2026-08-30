@@ -14,12 +14,4 @@
     });
   });
 
-  const preference = document.cookie
-    .split("; ")
-    .find((item) => item.startsWith("sleep2story_locale="))
-    ?.split("=")[1];
-
-  if (preference && document.body.classList.contains("language-gateway")) {
-    document.querySelector(`[data-locale="${preference}"]`)?.classList.add("preferred-locale");
-  }
 })();

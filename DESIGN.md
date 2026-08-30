@@ -20,9 +20,14 @@ Sleep2Story Web feels like a warm family radio poster: candid, literary, and rea
 | Amber soft | `--amber-soft` | `#ffddb6` | `#643f00` | Warm field |
 | Moss | `--moss` | `#4c644e` | `#b3ceb2` | Calm secondary field |
 | Moss soft | `--moss-soft` | `#ceeacd` | `#354c37` | Calm background |
+| Moss text | `--moss-text` | `#e0efdc` | `#e0efdc` | Text on the light-theme moss field |
 | Rose | `--rose` | `#795555` | `#eabbbb` | Consent accent |
 | Rose soft | `--rose-soft` | `#c09595` | `#5f3e3f` | Consent background |
+| Rose panel | `--rose-panel` | `#e1c0bf` | `#e1c0bf` | Light-theme poster panel |
 | Error | `--error` | `#ba1a1a` | `#ffdad6` | Validation only |
+| Night | `--night` | `#17130f` | `#17130f` | Dark comparison surfaces |
+| Night panel | `--night-panel` | `#2d2721` | `#2d2721` | Dark comparison panels |
+| Night text | `--night-text` | `#fdeee1` | `#fdeee1` | Text on night surfaces |
 
 Accent colors carry product meaning and interaction. No generic purple/blue SaaS gradient is introduced.
 
@@ -87,7 +92,7 @@ Accent colors carry product meaning and interaction. No generic purple/blue SaaS
 
 ### Locale switcher
 
-- Structure: links to equivalent locale routes.
+- Structure: compact globe-and-language summary opening a two-column list of native language names.
 - States: current locale marked with `aria-current`, hover, focus.
 - Accessibility: native language names and a localized group label.
 - Behavior: selection is remembered locally; no automatic redirect is allowed.
@@ -111,12 +116,12 @@ Strategy: mixed tonal fields plus one strong ink outline. Product screens may us
 
 - WCAG 2.2 AA target: 4.5:1 body contrast, 3:1 large text, visible focus, semantic landmarks, keyboard reachability, reduced-motion support.
 - Validate at 375px, 768px, and 1280px; repeat at 200% text size.
-- English, Russian, and German content must not clip, truncate, or create horizontal page overflow.
+- Content in every supported locale must not clip, truncate, or create horizontal page overflow.
 - System dark mode must preserve hierarchy and contrast.
 
 ### Accepted Debt
 
 | Item | Location | Why accepted | Owner / Exit |
 |---|---|---|---|
-| Product screenshots are available only in English | Localized landing pages | Mobile currently supports English and Russian, not German; fabricating a German app UI would misrepresent the product | Add real locale screenshots after Mobile ships the matching locale |
+| Product screenshots are available only in English | Localized landing pages | Mobile currently supports English and Russian; fabricating other localized app UIs would misrepresent the product | Add real locale screenshots after Mobile ships the matching locale |
 | Formal legal documents and German Impressum are absent | Footer / legal routes | Backend contains URL contracts but no approved legal text or operator identity | Product owner supplies approved documents and legal entity details before public launch |
