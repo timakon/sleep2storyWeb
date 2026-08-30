@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="{{locale}}">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#ffddb6" />
+    <meta name="color-scheme" content="light dark" />
+    <title>{{meta.title}}</title>
+    <meta name="description" content="{{meta.description}}" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <link rel="canonical" href="{{canonical_url}}" />
+{{hreflang_links}}
+    <link rel="icon" href="/assets/app-icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/assets/app-icon-180.png" />
+    <link rel="manifest" href="/site-{{locale}}.webmanifest" />
+    <link rel="preload" href="/assets/fonts/Inter-subset.woff2" as="font" type="font/woff2" crossorigin />
+    <style>{{styles}}</style>
+
+    <meta property="og:locale" content="{{og_locale}}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Sleep2Story" />
+    <meta property="og:title" content="{{meta.title}}" />
+    <meta property="og:description" content="{{meta.og_description}}" />
+    <meta property="og:url" content="{{canonical_url}}" />
+    <meta property="og:image" content="https://sleep2story.app/assets/og-{{locale}}.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="{{meta.title}}" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{meta.title}}" />
+    <meta name="twitter:description" content="{{meta.og_description}}" />
+    <meta name="twitter:image" content="https://sleep2story.app/assets/og-{{locale}}.jpg" />
+
+    <script type="application/ld+json">
+{{structured_data}}
+    </script>
+    <script src="/assets/site.js" defer></script>
+  </head>
+  <body class="v3" data-locale="{{locale}}">
+    <a class="skip" href="#main">{{skip}}</a>
+
+    <header class="v3-header">
+      <a class="brand brand-bold" href="/{{locale}}/#top" aria-label="{{brand.top}}">
+        <img src="/assets/app-icon.svg" width="44" height="44" alt="" />
+        <span>Sleep2Story</span>
+      </a>
+      <nav class="primary-nav" aria-label="{{nav_label}}">
+        <a href="/{{locale}}/#how">{{nav.how}}</a>
+        <a href="/{{locale}}/#inside">{{nav.inside}}</a>
+        <a href="/{{locale}}/#privacy">{{nav.privacy}}</a>
+      </nav>
+      <div class="header-actions">
+        <nav class="locale-switcher" aria-label="{{language.label}}">
+{{locale_links}}
+        </nav>
+        <a class="variant-link variant-link-bold" href="/{{locale}}/#faq">{{nav.faq}}</a>
+      </div>
+    </header>
+
+    <main id="main" tabindex="-1">
+      <section class="v3-hero" id="top">
+        <div class="v3-copy">
+          <p class="broadcast-label">{{hero.eyebrow}}</p>
+          <h1>{{hero.line1}}<br />{{hero.line2}}<br /><span>{{hero.line3}}</span></h1>
+          <p class="lead">{{hero.lead}}</p>
+          <a class="button button-ink" href="/{{locale}}/#how">
+            {{hero.cta}} <span aria-hidden="true">↓</span>
+          </a>
+        </div>
+        <div class="v3-stage" role="group" aria-label="{{stage.label}}">
+          <div class="sun" aria-hidden="true"></div>
+          <figure class="device poster-phone poster-phone-a">
+            <img src="/assets/screens/onboarding.webp" srcset="/assets/screens/onboarding-520.webp 520w, /assets/screens/onboarding.webp 1170w" sizes="(max-width: 820px) 58vw, 340px" width="1170" height="2532" alt="{{screen.onboarding.alt}}" fetchpriority="high" />
+          </figure>
+          <figure class="device poster-phone poster-phone-b">
+            <img src="/assets/screens/tonight.webp" srcset="/assets/screens/tonight-520.webp 520w, /assets/screens/tonight.webp 1170w" sizes="(max-width: 820px) 58vw, 340px" width="1170" height="2532" alt="{{screen.tonight.alt}}" fetchpriority="high" />
+          </figure>
+          <p class="sticker">{{stage_sticker}}</p>
+        </div>
+      </section>
+
+      <div class="ticker" aria-hidden="true">
+        <div aria-hidden="true">{{ticker}}</div>
+      </div>
+
+      <section class="v3-how" id="how">
+        <header>
+          <p class="broadcast-label">{{how.eyebrow}}</p>
+          <h2>{{how.line1}}<br />{{how.line2}}</h2>
+        </header>
+        <ol>
+          <li class="tile tile-amber">
+            <span>01</span>
+            <h3>{{step1.title}}</h3>
+            <p>{{step1.body}}</p>
+          </li>
+          <li class="tile tile-moss">
+            <span>02</span>
+            <h3>{{step2.title}}</h3>
+            <p>{{step2.body}}</p>
+          </li>
+          <li class="tile tile-rose">
+            <span>03</span>
+            <h3>{{step3.title}}</h3>
+            <p>{{step3.body}}</p>
+          </li>
+        </ol>
+      </section>
+
+      <section class="v3-inside" id="inside">
+        <div class="inside-head">
+          <p class="broadcast-label">{{inside.eyebrow}}</p>
+          <h2>{{inside.line1}}<br />{{inside.line2}}</h2>
+          <p>{{inside.body}}</p>
+        </div>
+        <figure class="inside-screen inside-screen-wide">
+          <img src="/assets/screens/story-editor.webp" srcset="/assets/screens/story-editor-520.webp 520w, /assets/screens/story-editor.webp 1170w" sizes="(max-width: 820px) 72vw, 330px" width="1170" height="2532" loading="lazy" alt="{{screen.editor.alt}}" />
+          <figcaption>{{inside.caption1}}</figcaption>
+        </figure>
+        <figure class="inside-screen inside-screen-tall">
+          <img src="/assets/screens/tonight.webp" srcset="/assets/screens/tonight-520.webp 520w, /assets/screens/tonight.webp 1170w" sizes="(max-width: 820px) 72vw, 330px" width="1170" height="2532" loading="lazy" alt="{{screen.tonight.alt}}" />
+          <figcaption>{{inside.caption2}}</figcaption>
+        </figure>
+      </section>
+
+      <section class="v3-proof" aria-label="{{proof.title}}">
+        <p class="broadcast-label">{{proof.eyebrow}}</p>
+        <h2>{{proof.title}}</h2>
+        <div class="proof-line">
+          <span>{{proof.1}}</span>
+          <span>{{proof.2}}</span>
+          <span>{{proof.3}}</span>
+          <span>{{proof.4}}</span>
+          <span>{{proof.5}}</span>
+        </div>
+      </section>
+
+      <section class="v3-consent" id="privacy">
+        <div class="consent-mark" aria-hidden="true">
+          <img src="/assets/app-icon.svg" width="150" height="150" alt="" loading="lazy" />
+        </div>
+        <div>
+          <p class="broadcast-label">{{consent.eyebrow}}</p>
+          <h2>{{consent.line1}}<br />{{consent.line2}}</h2>
+          <p>{{consent.body}}</p>
+        </div>
+      </section>
+
+      <section class="v3-faq" id="faq" aria-labelledby="faq-title">
+        <h2 id="faq-title">{{faq.title}}</h2>
+        <details>
+          <summary>{{faq.1.question}}</summary>
+          <p>{{faq.1.answer}}</p>
+        </details>
+        <details>
+          <summary>{{faq.2.question}}</summary>
+          <p>{{faq.2.answer}}</p>
+        </details>
+        <details>
+          <summary>{{faq.3.question}}</summary>
+          <p>{{faq.3.answer}}</p>
+        </details>
+        <details>
+          <summary>{{faq.4.question}}</summary>
+          <p>{{faq.4.answer}}</p>
+        </details>
+      </section>
+
+      <section class="v3-end">
+        <p class="broadcast-label">Sleep2Story</p>
+        <h2>{{end.line1}}<br />{{end.line2}}</h2>
+        <a class="button button-ink" href="/{{locale}}/#top">{{back_to_top}} <span aria-hidden="true">↑</span></a>
+      </section>
+    </main>
+
+    <footer class="simple-footer simple-footer-bold">
+      <p>{{footer.note}}</p>
+      <a href="/{{locale}}/#privacy">{{footer.consent}}</a>
+    </footer>
+  </body>
+</html>
