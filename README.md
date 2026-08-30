@@ -26,7 +26,7 @@ python3 -m http.server 4174 --directory dist
 
 Сборка не использует публичные переменные окружения и не содержит секретов.
 Минимальный вариант при существующем GitHub-репозитории — GitHub Pages с артефактом
-`dist/`, custom domain `sleep2story.app` и HTTPS. До включения публикации нужны:
+`dist/`, custom domain `sleep2story.com` и HTTPS. До включения публикации нужны:
 
 1. подтверждение платформы и доступа к DNS домена;
 2. утверждённые Privacy Policy, Terms и немецкий Impressum с данными оператора;

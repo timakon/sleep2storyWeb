@@ -25,7 +25,7 @@ from typing import Final
 
 
 ROOT: Final = Path(__file__).resolve().parent.parent
-SITE_URL: Final = "https://sleep2story.app"
+SITE_URL: Final = "https://sleep2story.com"
 LOCALES: Final = ("en", "ru", "de")
 OG_LOCALES: Final = {"en": "en_US", "ru": "ru_RU", "de": "de_DE"}
 NAV_LABELS: Final = {"en": "Primary navigation", "ru": "Основная навигация", "de": "Hauptnavigation"}
