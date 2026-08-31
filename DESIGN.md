@@ -103,7 +103,7 @@ Accent colors carry product meaning and interaction. No generic purple/blue SaaS
 | Type | Duration | Easing | Usage |
 |---|---|---|---|
 | Micro | 180ms | ease | Link/button affordance |
-| Ticker | 24s | linear | Broadcast strip only |
+| Ticker | 96s | linear | Seamless duplicated broadcast strip only |
 
 Only transform and opacity animate. `prefers-reduced-motion` disables smooth scrolling, ticker motion, and transitions.
 

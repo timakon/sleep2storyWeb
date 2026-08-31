@@ -1295,18 +1295,32 @@ p {
   color: var(--amber-soft);
 }
 
-.ticker div {
+.ticker__track {
+  display: flex;
   width: max-content;
-  padding: 18px 0;
+  will-change: transform;
   font-size: clamp(24px, 3vw, 42px);
   font-weight: 900;
   letter-spacing: -0.03em;
   white-space: nowrap;
-  animation: broadcast 24s linear infinite;
+  animation: broadcast 96s linear infinite;
+}
+
+.ticker__group {
+  min-width: 100vw;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.ticker__item {
+  flex-shrink: 0;
+  padding: 18px clamp(16px, 2vw, 32px);
 }
 
 @keyframes broadcast {
-  to { transform: translateX(-40%); }
+  to { transform: translateX(-50%); }
 }
 
 .v3-how {
@@ -2058,14 +2072,6 @@ p {
 
   .v3-stage {
     min-height: 590px;
-  }
-
-  .ticker div {
-    width: 100%;
-    height: 72px;
-    overflow: hidden;
-    white-space: normal;
-    animation: none;
   }
 
   .poster-phone {

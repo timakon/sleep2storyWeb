@@ -138,6 +138,8 @@ def check(output: Path) -> None:
         assert page_path.is_file(), f"Missing route {route}"
         source = page_path.read_text(encoding="utf-8")
         assert "{{" not in source, f"Unresolved template token in {route}"
+        assert source.count('class="ticker__group"') == 2, f"Ticker loop is not duplicated in {route}"
+        assert source.count('class="ticker__item"') == 8, f"Ticker does not fill wide screens in {route}"
 
         facts = parse_page(page_path)
         assert facts.language == locale
