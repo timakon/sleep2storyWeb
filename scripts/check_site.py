@@ -40,6 +40,22 @@ LOCALES = (
     "tr",
 )
 SITE_URL = "https://sleep2story.com"
+ARTICLE_PATHS = {
+    "en": "/guides/how-to-record-bedtime-stories/",
+    "ru": "/ru/guides/kak-zapisat-skazku-na-noch/",
+    "de": "/de/ratgeber/gute-nacht-geschichten-aufnehmen/",
+    "uk": "/uk/porady/yak-zapysaty-kazku-na-nich/",
+    "pl": "/pl/poradniki/jak-nagrac-bajke-na-dobranoc/",
+    "sr": "/sr/vodici/kako-snimiti-pricu-za-laku-noc/",
+    "fr": "/fr/guides/enregistrer-une-histoire-du-soir/",
+    "es": "/es/guias/grabar-cuentos-para-dormir/",
+    "it": "/it/guide/registrare-storie-della-buonanotte/",
+    "pt": "/pt/guias/gravar-historias-para-dormir/",
+    "nl": "/nl/gidsen/verhaaltje-voor-het-slapengaan-opnemen/",
+    "cs": "/cs/pruvodce/jak-nahrat-pohadku-na-dobrou-noc/",
+    "ro": "/ro/ghiduri/inregistrare-povesti-de-seara/",
+    "tr": "/tr/rehber/uyku-masali-nasil-kaydedilir/",
+}
 
 
 def locale_path(locale: str) -> str:
@@ -154,8 +170,9 @@ def check(output: Path) -> None:
             if switched_locale
         } == expected_locale_links
         assert (f"{route}#how", "") in facts.links
+        assert (ARTICLE_PATHS[locale], "") in facts.links
         assert all(
-            href.startswith(f"{route}#")
+            href == ARTICLE_PATHS[locale] or href.startswith(f"{route}#")
             for href, switched_locale in facts.links
             if href.startswith("/") and not switched_locale
         )
@@ -165,19 +182,55 @@ def check(output: Path) -> None:
     assert 'name="robots" content="noindex"' in english_redirect
     assert 'rel="canonical" href="https://sleep2story.com/"' in english_redirect
 
+    article_alternates = {
+        **{locale: f"{SITE_URL}{path}" for locale, path in ARTICLE_PATHS.items()},
+        "x-default": f"{SITE_URL}{ARTICLE_PATHS['en']}",
+    }
+    article_titles: set[str] = set()
+    for locale, route in ARTICLE_PATHS.items():
+        article_path = output / route.lstrip("/") / "index.html"
+        assert article_path.is_file(), f"Missing route {route}"
+        article_source = article_path.read_text(encoding="utf-8")
+        article_facts = parse_page(article_path)
+        assert "{{" not in article_source
+        assert article_facts.language == locale
+        assert article_facts.title.strip()
+        assert article_facts.title not in article_titles, f"Untranslated article title in {locale}"
+        article_titles.add(article_facts.title)
+        assert article_facts.description.strip()
+        assert article_facts.canonical == f"{SITE_URL}{route}"
+        assert article_facts.hreflang == article_alternates
+        assert article_facts.og_image == f"{SITE_URL}/assets/og-{locale}.jpg"
+        assert {
+            switched_locale: href
+            for href, switched_locale in article_facts.links
+            if switched_locale
+        } == ARTICLE_PATHS
+        assert '"@type": "Article"' in article_source
+        assert f'"inLanguage": "{locale}"' in article_source
+        assert '"datePublished": "2026-09-02"' in article_source
+        assert (f"{locale_path(locale)}#how", "") in article_facts.links
+        assert_local_targets(output, article_facts)
+
     sitemap = ET.parse(output / "sitemap.xml").getroot()
     namespace = {
         "s": "http://www.sitemaps.org/schemas/sitemap/0.9",
         "xhtml": "http://www.w3.org/1999/xhtml",
     }
     urls = {node.text for node in sitemap.findall("s:url/s:loc", namespace)}
-    assert urls == {f"{SITE_URL}{locale_path(locale)}" for locale in LOCALES}
+    assert urls == {
+        *(f"{SITE_URL}{locale_path(locale)}" for locale in LOCALES),
+        *(f"{SITE_URL}{route}" for route in ARTICLE_PATHS.values()),
+    }
     for entry in sitemap.findall("s:url", namespace):
+        location = entry.find("s:loc", namespace)
+        assert location is not None
         alternates = {
             link.attrib["hreflang"]: link.attrib["href"]
             for link in entry.findall("xhtml:link", namespace)
         }
-        assert alternates == expected_alternates
+        expected = article_alternates if location.text in article_alternates.values() else expected_alternates
+        assert alternates == expected
 
     for locale in LOCALES:
         manifest = output / f"site-{locale}.webmanifest"

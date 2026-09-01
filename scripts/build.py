@@ -23,6 +23,10 @@ import shutil
 import sys
 from typing import Final
 
+from articles import ARTICLE_PATHS, hreflang_links as article_hreflang_links
+from articles import locale_links as article_locale_links, sitemap_entries as article_sitemap_entries
+from articles import structured_data as article_structured_data
+
 
 ROOT: Final = Path(__file__).resolve().parent.parent
 SITE_URL: Final = "https://sleep2story.com"
@@ -54,9 +58,9 @@ class BuildError(RuntimeError):
     pass
 
 
-def load_copy(locale: str) -> dict[str, str]:
+def load_copy(locale: str, directory: str = "locales") -> dict[str, str]:
     values: dict[str, str] = {}
-    path = ROOT / "site" / "locales" / f"{locale}.properties"
+    path = ROOT / "site" / directory / f"{locale}.properties"
     for line_number, raw_line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
         line = raw_line.strip()
         if not line:
@@ -105,33 +109,22 @@ def structured_data(locale: str, copy: dict[str, str]) -> str:
         "@context": "https://schema.org",
         "@graph": [
             {
-                "@type": "WebSite",
-                "@id": f"{page_url}#website",
-                "url": page_url,
-                "name": "Sleep2Story",
-                "inLanguage": locale,
+                "@type": "WebSite", "@id": f"{page_url}#website", "url": page_url,
+                "name": "Sleep2Story", "inLanguage": locale,
             },
             {
-                "@type": "MobileApplication",
-                "@id": f"{SITE_URL}/#app",
-                "name": "Sleep2Story",
-                "url": page_url,
-                "applicationCategory": "LifestyleApplication",
-                "operatingSystem": "iOS, Android",
-                "inLanguage": ["en", "ru"],
-                "description": copy["meta.og_description"],
+                "@type": "MobileApplication", "@id": f"{SITE_URL}/#app",
+                "name": "Sleep2Story", "url": page_url,
+                "applicationCategory": "LifestyleApplication", "operatingSystem": "iOS, Android",
+                "inLanguage": ["en", "ru"], "description": copy["meta.og_description"],
             },
             {
-                "@type": "FAQPage",
-                "@id": f"{page_url}#faq",
-                "inLanguage": locale,
+                "@type": "FAQPage", "@id": f"{page_url}#faq", "inLanguage": locale,
                 "mainEntity": [
                     {
-                        "@type": "Question",
-                        "name": copy[f"faq.{index}.question"],
+                        "@type": "Question", "name": copy[f"faq.{index}.question"],
                         "acceptedAnswer": {
-                            "@type": "Answer",
-                            "text": copy[f"faq.{index}.answer"],
+                            "@type": "Answer", "text": copy[f"faq.{index}.answer"],
                         },
                     }
                     for index in range(1, 5)
@@ -168,7 +161,7 @@ def write_sitemap(output: Path) -> None:
         f'    <xhtml:link rel="alternate" hreflang="{language}" href="{url}" />'
         for language, url in alternate_urls().items()
     )
-    entries = "\n".join(
+    home_entries = "\n".join(
         f"  <url>\n    <loc>{SITE_URL}{locale_path(locale)}</loc>\n{alternates}\n  </url>"
         for locale in LOCALES
     )
@@ -176,7 +169,7 @@ def write_sitemap(output: Path) -> None:
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
         'xmlns:xhtml="http://www.w3.org/1999/xhtml">\n'
-        f"{entries}\n"
+        f"{home_entries}\n{article_sitemap_entries(SITE_URL)}\n"
         "</urlset>\n"
     )
     (output / "sitemap.xml").write_text(sitemap, encoding="utf-8")
@@ -208,7 +201,7 @@ def build(output: Path) -> None:
     css = re.sub(r"/\*.*?\*/", "", css, flags=re.DOTALL)
     css = re.sub(r"\s+", " ", css)
     css = re.sub(r"\s*([{}:;,])\s*", r"\1", css)
-    css = css.strip()
+    css = css.strip().replace("../assets/", "/assets/")
 
     template = (ROOT / "site" / "home.template.html").read_text(encoding="utf-8")
     alternates = hreflang_links()
@@ -226,6 +219,7 @@ def build(output: Path) -> None:
                 "hreflang_links": alternates,
                 "locale_links": locale_links(locale),
                 "locale_code": locale.upper(),
+                "article_path": ARTICLE_PATHS[locale],
                 "og_locale": OG_LOCALES[locale],
                 "nav_label": NAV_LABELS[locale],
                 "stage_sticker": escape(copy["stage.sticker"]).replace("\n", "<br />"),
@@ -243,13 +237,9 @@ def build(output: Path) -> None:
             "display": "standalone",
             "background_color": "#fff8f4",
             "theme_color": "#fff8f4",
-            "icons": [
-                {
-                    "src": "/assets/app-icon-512.png",
-                    "sizes": "512x512",
-                    "type": "image/png",
-                }
-            ],
+            "icons": [{
+                "src": "/assets/app-icon-512.png", "sizes": "512x512", "type": "image/png",
+            }],
         }
         (output / f"site-{locale}.webmanifest").write_text(
             json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
@@ -265,6 +255,34 @@ def build(output: Path) -> None:
         '<body><a href="/">Continue to Sleep2Story</a></body></html>\n',
         encoding="utf-8",
     )
+    article_copies = {locale: load_copy(locale, "article-locales") for locale in LOCALES}
+    article_keys = set(article_copies["en"])
+    for locale, article_copy in article_copies.items():
+        if set(article_copy) != article_keys:
+            missing = sorted(article_keys - set(article_copy))
+            extra = sorted(set(article_copy) - article_keys)
+            raise BuildError(f"Article parity failed for {locale}: missing={missing}, extra={extra}")
+
+    article_template = (
+        ROOT / "site" / "articles" / "how-to-record-bedtime-stories.html"
+    ).read_text(encoding="utf-8")
+    article_alternates = article_hreflang_links(SITE_URL)
+    for locale, article_copy in article_copies.items():
+        route = ARTICLE_PATHS[locale]
+        article_page = render(article_template, article_copy, {
+            "locale": locale,
+            "canonical_url": f"{SITE_URL}{route}",
+            "hreflang_links": article_alternates,
+            "locale_links": article_locale_links(locale, LOCALE_NAMES),
+            "locale_path": locale_path(locale),
+            "locale_code": locale.upper(),
+            "og_locale": OG_LOCALES[locale],
+            "styles": css,
+            "structured_data": article_structured_data(SITE_URL, locale, article_copy),
+        })
+        article_output = output / route.lstrip("/")
+        article_output.mkdir(parents=True)
+        (article_output / "index.html").write_text(article_page, encoding="utf-8")
     (output / "robots.txt").write_text(
         f"User-agent: *\nAllow: /\n\nSitemap: {SITE_URL}/sitemap.xml\n",
         encoding="utf-8",
