@@ -23,16 +23,13 @@ import shutil
 import sys
 from typing import Final
 
-from articles import ARTICLE_PATHS, hreflang_links as article_hreflang_links
-from articles import locale_links as article_locale_links, sitemap_entries as article_sitemap_entries
-from articles import structured_data as article_structured_data
+from articles import ARTICLE_PATHS, SECTION_PATHS, hreflang_links as article_hreflang_links, locale_links as article_locale_links, section_structured_data
+from articles import sitemap_entries as article_sitemap_entries, structured_data as article_structured_data
 
 
 ROOT: Final = Path(__file__).resolve().parent.parent
 SITE_URL: Final = "https://sleep2story.com"
-LOCALES: Final = (
-    "en", "ru", "de", "uk", "pl", "sr", "fr", "es", "it", "pt", "nl", "cs", "ro", "tr",
-)
+LOCALES: Final = ("en", "ru", "de", "uk", "pl", "sr", "fr", "es", "it", "pt", "nl", "cs", "ro", "tr")
 LOCALE_NAMES: Final = {
     "en": "English", "ru": "Русский", "de": "Deutsch", "uk": "Українська",
     "pl": "Polski", "sr": "Srpski", "fr": "Français", "es": "Español",
@@ -229,31 +226,24 @@ def build(output: Path) -> None:
         )
         (locale_dir / "index.html").write_text(page, encoding="utf-8")
         manifest = {
-            "name": "Sleep2Story",
-            "short_name": "Sleep2Story",
-            "description": copy["manifest.description"],
-            "lang": locale,
-            "start_url": route,
-            "display": "standalone",
-            "background_color": "#fff8f4",
-            "theme_color": "#fff8f4",
+            "name": "Sleep2Story", "short_name": "Sleep2Story",
+            "description": copy["manifest.description"], "lang": locale,
+            "start_url": route, "display": "standalone",
+            "background_color": "#fff8f4", "theme_color": "#fff8f4",
             "icons": [{
                 "src": "/assets/app-icon-512.png", "sizes": "512x512", "type": "image/png",
             }],
         }
-        (output / f"site-{locale}.webmanifest").write_text(
-            json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
-            encoding="utf-8",
-        )
+        manifest_source = json.dumps(manifest, ensure_ascii=False, indent=2) + "\n"
+        (output / f"site-{locale}.webmanifest").write_text(manifest_source, encoding="utf-8")
 
     english_redirect = output / "en"
     english_redirect.mkdir()
     (english_redirect / "index.html").write_text(
         '<!doctype html><html lang="en"><head><meta charset="utf-8">'
         '<meta name="robots" content="noindex"><link rel="canonical" href="https://sleep2story.com/">'
-        '<meta http-equiv="refresh" content="0;url=/"><title>Sleep2Story</title></head>'
-        '<body><a href="/">Continue to Sleep2Story</a></body></html>\n',
-        encoding="utf-8",
+        '<meta http-equiv="refresh" content="0;url=/"><title>Sleep2Story</title></head><body>'
+        '<a href="/">Continue to Sleep2Story</a></body></html>\n', encoding="utf-8",
     )
     article_copies = {locale: load_copy(locale, "article-locales") for locale in LOCALES}
     article_keys = set(article_copies["en"])
@@ -263,10 +253,10 @@ def build(output: Path) -> None:
             extra = sorted(set(article_copy) - article_keys)
             raise BuildError(f"Article parity failed for {locale}: missing={missing}, extra={extra}")
 
-    article_template = (
-        ROOT / "site" / "articles" / "how-to-record-bedtime-stories.html"
-    ).read_text(encoding="utf-8")
+    article_template = (ROOT / "site" / "articles" / "how-to-record-bedtime-stories.html").read_text(encoding="utf-8")
+    section_template = (ROOT / "site" / "articles" / "index.html").read_text(encoding="utf-8")
     article_alternates = article_hreflang_links(SITE_URL)
+    section_alternates = article_hreflang_links(SITE_URL, SECTION_PATHS)
     for locale, article_copy in article_copies.items():
         route = ARTICLE_PATHS[locale]
         article_page = render(article_template, article_copy, {
@@ -283,6 +273,16 @@ def build(output: Path) -> None:
         article_output = output / route.lstrip("/")
         article_output.mkdir(parents=True)
         (article_output / "index.html").write_text(article_page, encoding="utf-8")
+        section_route = SECTION_PATHS[locale]
+        section_page = render(section_template, article_copy, {
+            "locale": locale, "canonical_url": f"{SITE_URL}{section_route}",
+            "hreflang_links": section_alternates,
+            "locale_links": article_locale_links(locale, LOCALE_NAMES, SECTION_PATHS),
+            "locale_path": locale_path(locale), "locale_code": locale.upper(),
+            "article_path": route, "og_locale": OG_LOCALES[locale], "styles": css,
+            "structured_data": section_structured_data(SITE_URL, locale, article_copy),
+        })
+        (output / section_route.lstrip("/") / "index.html").write_text(section_page, encoding="utf-8")
     (output / "robots.txt").write_text(
         f"User-agent: *\nAllow: /\n\nSitemap: {SITE_URL}/sitemap.xml\n",
         encoding="utf-8",

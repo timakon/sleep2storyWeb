@@ -22,25 +22,32 @@ ARTICLE_PATHS: Final[Mapping[str, str]] = MappingProxyType({
     "ro": "/ro/ghiduri/inregistrare-povesti-de-seara/",
     "tr": "/tr/rehber/uyku-masali-nasil-kaydedilir/",
 })
+SECTION_PATHS: Final[Mapping[str, str]] = MappingProxyType({
+    locale: path.rsplit("/", 2)[0] + "/" for locale, path in ARTICLE_PATHS.items()
+})
 
 
-def alternate_urls(site_url: str) -> Mapping[str, str]:
+def alternate_urls(
+    site_url: str, paths: Mapping[str, str] = ARTICLE_PATHS,
+) -> Mapping[str, str]:
     return MappingProxyType({
-        **{locale: f"{site_url}{path}" for locale, path in ARTICLE_PATHS.items()},
-        "x-default": f"{site_url}{ARTICLE_PATHS['en']}",
+        **{locale: f"{site_url}{path}" for locale, path in paths.items()},
+        "x-default": f"{site_url}{paths['en']}",
     })
 
 
-def hreflang_links(site_url: str) -> str:
+def hreflang_links(site_url: str, paths: Mapping[str, str] = ARTICLE_PATHS) -> str:
     return "\n".join(
         f'    <link rel="alternate" hreflang="{locale}" href="{url}" />'
-        for locale, url in alternate_urls(site_url).items()
+        for locale, url in alternate_urls(site_url, paths).items()
     )
 
 
-def locale_links(current: str, names: Mapping[str, str]) -> str:
+def locale_links(
+    current: str, names: Mapping[str, str], paths: Mapping[str, str] = ARTICLE_PATHS,
+) -> str:
     links: list[str] = []
-    for locale, path in ARTICLE_PATHS.items():
+    for locale, path in paths.items():
         current_attribute = ' aria-current="page"' if locale == current else ""
         links.append(
             f'            <a href="{path}" lang="{locale}" data-locale="{locale}"'
@@ -71,12 +78,38 @@ def structured_data(site_url: str, locale: str, copy: Mapping[str, str]) -> str:
     return json.dumps(article, ensure_ascii=False, indent=6)
 
 
+def section_structured_data(site_url: str, locale: str, copy: Mapping[str, str]) -> str:
+    canonical = f"{site_url}{SECTION_PATHS[locale]}"
+    data = {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        "name": copy["index.meta_title"],
+        "description": copy["index.meta_description"],
+        "url": canonical,
+        "inLanguage": locale,
+        "mainEntity": {
+            "@type": "ItemList",
+            "numberOfItems": 1,
+            "itemListElement": [{
+                "@type": "ListItem",
+                "position": 1,
+                "url": f"{site_url}{ARTICLE_PATHS[locale]}",
+                "name": copy["meta.og_title"],
+            }],
+        },
+    }
+    return json.dumps(data, ensure_ascii=False, indent=6)
+
+
 def sitemap_entries(site_url: str) -> str:
-    alternates = "\n".join(
-        f'    <xhtml:link rel="alternate" hreflang="{locale}" href="{url}" />'
-        for locale, url in alternate_urls(site_url).items()
-    )
-    return "\n".join(
-        f"  <url>\n    <loc>{site_url}{path}</loc>\n{alternates}\n  </url>"
-        for path in ARTICLE_PATHS.values()
-    )
+    entries: list[str] = []
+    for paths in (SECTION_PATHS, ARTICLE_PATHS):
+        alternates = "\n".join(
+            f'    <xhtml:link rel="alternate" hreflang="{locale}" href="{url}" />'
+            for locale, url in alternate_urls(site_url, paths).items()
+        )
+        entries.extend(
+            f"  <url>\n    <loc>{site_url}{path}</loc>\n{alternates}\n  </url>"
+            for path in paths.values()
+        )
+    return "\n".join(entries)

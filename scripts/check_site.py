@@ -56,6 +56,9 @@ ARTICLE_PATHS = {
     "ro": "/ro/ghiduri/inregistrare-povesti-de-seara/",
     "tr": "/tr/rehber/uyku-masali-nasil-kaydedilir/",
 }
+SECTION_PATHS = {
+    locale: route.rsplit("/", 2)[0] + "/" for locale, route in ARTICLE_PATHS.items()
+}
 
 
 def locale_path(locale: str) -> str:
@@ -212,6 +215,24 @@ def check(output: Path) -> None:
         assert (f"{locale_path(locale)}#how", "") in article_facts.links
         assert_local_targets(output, article_facts)
 
+    section_alternates = {
+        **{locale: f"{SITE_URL}{path}" for locale, path in SECTION_PATHS.items()},
+        "x-default": f"{SITE_URL}{SECTION_PATHS['en']}",
+    }
+    section_titles: set[str] = set()
+    for locale, route in SECTION_PATHS.items():
+        section_path = output / route.lstrip("/") / "index.html"
+        assert section_path.is_file(), f"Missing guide index {route}"
+        section_facts = parse_page(section_path)
+        assert section_facts.language == locale
+        assert section_facts.title.strip() and section_facts.description.strip()
+        assert section_facts.title not in section_titles
+        section_titles.add(section_facts.title)
+        assert section_facts.canonical == f"{SITE_URL}{route}"
+        assert section_facts.hreflang == section_alternates
+        assert (ARTICLE_PATHS[locale], "") in section_facts.links
+        assert_local_targets(output, section_facts)
+
     sitemap = ET.parse(output / "sitemap.xml").getroot()
     namespace = {
         "s": "http://www.sitemaps.org/schemas/sitemap/0.9",
@@ -221,6 +242,7 @@ def check(output: Path) -> None:
     assert urls == {
         *(f"{SITE_URL}{locale_path(locale)}" for locale in LOCALES),
         *(f"{SITE_URL}{route}" for route in ARTICLE_PATHS.values()),
+        *(f"{SITE_URL}{route}" for route in SECTION_PATHS.values()),
     }
     for entry in sitemap.findall("s:url", namespace):
         location = entry.find("s:loc", namespace)
@@ -229,7 +251,12 @@ def check(output: Path) -> None:
             link.attrib["hreflang"]: link.attrib["href"]
             for link in entry.findall("xhtml:link", namespace)
         }
-        expected = article_alternates if location.text in article_alternates.values() else expected_alternates
+        if location.text in article_alternates.values():
+            expected = article_alternates
+        elif location.text in section_alternates.values():
+            expected = section_alternates
+        else:
+            expected = expected_alternates
         assert alternates == expected
 
     for locale in LOCALES:
