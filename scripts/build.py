@@ -23,7 +23,7 @@ import shutil
 import sys
 from typing import Final
 
-from articles import ARTICLE_PATHS, SECTION_PATHS, hreflang_links as article_hreflang_links, locale_links as article_locale_links, section_structured_data
+from articles import ARTICLE_CATALOG, ARTICLE_PATHS, SECTION_PATHS, hreflang_links as article_hreflang_links, locale_links as article_locale_links, section_cards, section_structured_data
 from articles import sitemap_entries as article_sitemap_entries, structured_data as article_structured_data
 
 
@@ -69,6 +69,15 @@ def load_copy(locale: str, directory: str = "locales") -> dict[str, str]:
             raise BuildError(f"Duplicate translation key {key!r} at {path}:{line_number}")
         values[key] = value.replace(r"\n", "\n")
     return values
+
+
+def load_copies(directory: str) -> dict[str, dict[str, str]]:
+    copies = {locale: load_copy(locale, directory) for locale in LOCALES}
+    english_keys = set(copies["en"])
+    for locale, copy in copies.items():
+        if set(copy) != english_keys:
+            raise BuildError(f"Translation parity failed for {directory}/{locale}: missing={sorted(english_keys - set(copy))}, extra={sorted(set(copy) - english_keys)}")
+    return copies
 
 
 def locale_path(locale: str) -> str:
@@ -173,13 +182,7 @@ def write_sitemap(output: Path) -> None:
 
 
 def build(output: Path) -> None:
-    copies = {locale: load_copy(locale) for locale in LOCALES}
-    english_keys = set(copies["en"])
-    for locale, copy in copies.items():
-        if set(copy) != english_keys:
-            missing = sorted(english_keys - set(copy))
-            extra = sorted(set(copy) - english_keys)
-            raise BuildError(f"Translation parity failed for {locale}: missing={missing}, extra={extra}")
+    copies = load_copies("locales")
 
     shutil.rmtree(output, ignore_errors=True)
     output.mkdir(parents=True)
@@ -245,48 +248,46 @@ def build(output: Path) -> None:
         '<meta http-equiv="refresh" content="0;url=/"><title>Sleep2Story</title></head><body>'
         '<a href="/">Continue to Sleep2Story</a></body></html>\n', encoding="utf-8",
     )
-    article_copies = {locale: load_copy(locale, "article-locales") for locale in LOCALES}
-    article_keys = set(article_copies["en"])
-    for locale, article_copy in article_copies.items():
-        if set(article_copy) != article_keys:
-            missing = sorted(article_keys - set(article_copy))
-            extra = sorted(set(article_copy) - article_keys)
-            raise BuildError(f"Article parity failed for {locale}: missing={missing}, extra={extra}")
-
+    base_article_copies = load_copies(ARTICLE_CATALOG[0][0])
+    article_copies = [(base_article_copies, ARTICLE_CATALOG[0][1])]
+    for directory, paths in ARTICLE_CATALOG[1:]:
+        overrides = load_copies(directory)
+        merged = {locale: base_article_copies[locale] | overrides[locale] for locale in LOCALES}
+        article_copies.append((merged, paths))
     article_template = (ROOT / "site" / "articles" / "how-to-record-bedtime-stories.html").read_text(encoding="utf-8")
     section_template = (ROOT / "site" / "articles" / "index.html").read_text(encoding="utf-8")
-    article_alternates = article_hreflang_links(SITE_URL)
     section_alternates = article_hreflang_links(SITE_URL, SECTION_PATHS)
-    for locale, article_copy in article_copies.items():
-        route = ARTICLE_PATHS[locale]
-        article_page = render(article_template, article_copy, {
-            "locale": locale,
-            "canonical_url": f"{SITE_URL}{route}",
-            "hreflang_links": article_alternates,
-            "locale_links": article_locale_links(locale, LOCALE_NAMES),
-            "locale_path": locale_path(locale),
-            "locale_code": locale.upper(),
-            "og_locale": OG_LOCALES[locale],
-            "styles": css,
-            "structured_data": article_structured_data(SITE_URL, locale, article_copy),
-        })
-        article_output = output / route.lstrip("/")
-        article_output.mkdir(parents=True)
-        (article_output / "index.html").write_text(article_page, encoding="utf-8")
+    for copies_by_locale, paths in article_copies:
+        article_alternates = article_hreflang_links(SITE_URL, paths)
+        for locale, article_copy in copies_by_locale.items():
+            route = paths[locale]
+            article_page = render(article_template, article_copy, {
+                "locale": locale, "canonical_url": f"{SITE_URL}{route}",
+                "hreflang_links": article_alternates,
+                "locale_links": article_locale_links(locale, LOCALE_NAMES, paths),
+                "locale_path": locale_path(locale), "locale_code": locale.upper(),
+                "section_path": SECTION_PATHS[locale],
+                "og_locale": OG_LOCALES[locale], "styles": css,
+                "structured_data": article_structured_data(SITE_URL, locale, article_copy, paths),
+            })
+            article_output = output / route.lstrip("/")
+            article_output.mkdir(parents=True)
+            (article_output / "index.html").write_text(article_page, encoding="utf-8")
+    for locale in LOCALES:
+        localized_articles = [(copies[locale], paths) for copies, paths in article_copies]
         section_route = SECTION_PATHS[locale]
-        section_page = render(section_template, article_copy, {
+        section_copy = article_copies[0][0][locale]
+        section_page = render(section_template, section_copy, {
             "locale": locale, "canonical_url": f"{SITE_URL}{section_route}",
             "hreflang_links": section_alternates,
             "locale_links": article_locale_links(locale, LOCALE_NAMES, SECTION_PATHS),
             "locale_path": locale_path(locale), "locale_code": locale.upper(),
-            "article_path": route, "og_locale": OG_LOCALES[locale], "styles": css,
-            "structured_data": section_structured_data(SITE_URL, locale, article_copy),
+            "article_cards": section_cards(locale, localized_articles, section_copy["index.read_more"]),
+            "og_locale": OG_LOCALES[locale], "styles": css,
+            "structured_data": section_structured_data(SITE_URL, locale, section_copy, localized_articles),
         })
         (output / section_route.lstrip("/") / "index.html").write_text(section_page, encoding="utf-8")
-    (output / "robots.txt").write_text(
-        f"User-agent: *\nAllow: /\n\nSitemap: {SITE_URL}/sitemap.xml\n",
-        encoding="utf-8",
-    )
+    (output / "robots.txt").write_text(f"User-agent: *\nAllow: /\n\nSitemap: {SITE_URL}/sitemap.xml\n", encoding="utf-8")
     write_sitemap(output)
 
 

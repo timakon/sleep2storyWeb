@@ -60,16 +60,8 @@
       </section>
 
       <section class="guide-index__list" id="guides" aria-labelledby="guides-title">
-        <p class="guide-kicker">{{index.available}}</p>
-        <a class="guide-index__card" href="{{article_path}}">
-          <span class="guide-index__number" aria-hidden="true">01</span>
-          <span class="guide-index__copy">
-            <span class="broadcast-label">{{hero.eyebrow}}</span>
-            <span class="guide-index__title" id="guides-title">{{meta.og_title}}</span>
-            <span class="guide-index__summary">{{meta.description}}</span>
-          </span>
-          <span class="guide-index__cta">{{index.read_more}} <span aria-hidden="true">→</span></span>
-        </a>
+        <p class="guide-kicker" id="guides-title">{{index.available}}</p>
+{{article_cards}}
       </section>
     </main>
 

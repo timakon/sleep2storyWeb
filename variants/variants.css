@@ -2289,7 +2289,7 @@ p {
 }
 
 .guide-header {
-  background: rgb(255 221 182 / 96%);
+  background: color-mix(in srgb, var(--amber-soft) 96%, transparent);
 }
 
 .guide-hero {
@@ -2761,8 +2761,8 @@ p {
   line-height: 0.92;
   text-transform: uppercase;
   word-spacing: 0.05em;
-  hyphens: auto;
-  overflow-wrap: anywhere;
+  hyphens: none;
+  overflow-wrap: normal;
 }
 
 .guide-product__copy > p:not(.broadcast-label) {
@@ -3177,7 +3177,7 @@ p {
   }
 
   .guide-index__hero h1 {
-    font-size: clamp(42px, 13vw, 60px);
+    font-size: clamp(40px, 12vw, 56px);
     letter-spacing: -0.055em;
   }
 
@@ -3197,6 +3197,83 @@ p {
 
   .guide-index__cta {
     grid-column: 1;
+  }
+}
+
+@media (max-width: 320px) {
+  .guide {
+    overflow-x: hidden;
+  }
+
+  .guide-hero__copy,
+  .guide-index__hero,
+  .guide-index__list {
+    padding-inline: 12px;
+  }
+
+  .guide-hero h1,
+  .guide-index__hero h1 {
+    font-size: 24px;
+    hyphens: none;
+    overflow-wrap: normal;
+  }
+
+  .guide-hero h1 span {
+    display: block;
+    max-width: 100%;
+    overflow-wrap: normal;
+  }
+
+  .guide-index__title {
+    font-size: 22px;
+    hyphens: none;
+    overflow-wrap: normal;
+  }
+
+  .guide-body h2,
+  .guide-answer h2,
+  .guide-faq h2,
+  .guide-sources h2 {
+    font-size: 22px;
+    hyphens: none;
+  }
+
+  .guide-body h3 {
+    font-size: 18px;
+    hyphens: none;
+  }
+
+  .guide-body p,
+  .guide-body li,
+  .guide-faq summary,
+  .guide-sources a {
+    min-width: 0;
+    hyphens: auto;
+    overflow-wrap: normal;
+  }
+
+  .guide-steps li {
+    grid-template-columns: 1fr;
+  }
+
+  .guide-checklist li {
+    padding: 14px 10px 14px 42px;
+    font-size: 15px;
+  }
+
+  .guide-checklist li::before {
+    left: 10px;
+  }
+
+  .guide-product h2 {
+    font-size: 20px;
+    hyphens: none;
+    overflow-wrap: normal;
+  }
+
+  .v3-header .locale-menu {
+    width: calc(100vw - 24px);
+    grid-template-columns: 1fr;
   }
 }
 
