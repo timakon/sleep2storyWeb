@@ -145,6 +145,7 @@ def assert_local_targets(output: Path, facts: PageFacts) -> None:
 
 
 def check(output: Path) -> None:
+    assert (output / "favicon.ico").is_file(), "Missing root favicon"
     expected_alternates = {
         **{locale: f"{SITE_URL}{locale_path(locale)}" for locale in LOCALES},
         "x-default": f"{SITE_URL}/",
@@ -166,6 +167,7 @@ def check(output: Path) -> None:
         assert facts.description.strip()
         assert facts.canonical == f"{SITE_URL}{route}"
         assert facts.og_image == f"{SITE_URL}/assets/og-{locale}.jpg"
+        assert "/favicon.ico" in facts.resources, f"Missing search favicon in {route}"
         assert facts.hreflang == expected_alternates
         assert {
             switched_locale: href
@@ -204,6 +206,7 @@ def check(output: Path) -> None:
         assert article_facts.canonical == f"{SITE_URL}{route}"
         assert article_facts.hreflang == article_alternates
         assert article_facts.og_image == f"{SITE_URL}/assets/og-{locale}.jpg"
+        assert "/favicon.ico" in article_facts.resources, f"Missing search favicon in {route}"
         assert {
             switched_locale: href
             for href, switched_locale in article_facts.links
@@ -230,6 +233,7 @@ def check(output: Path) -> None:
         section_titles.add(section_facts.title)
         assert section_facts.canonical == f"{SITE_URL}{route}"
         assert section_facts.hreflang == section_alternates
+        assert "/favicon.ico" in section_facts.resources, f"Missing search favicon in {route}"
         assert (ARTICLE_PATHS[locale], "") in section_facts.links
         assert_local_targets(output, section_facts)
 
