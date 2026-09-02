@@ -216,7 +216,7 @@ def build(output: Path) -> None:
                 "hreflang_links": alternates,
                 "locale_links": locale_links(locale),
                 "locale_code": locale.upper(),
-                "article_path": ARTICLE_PATHS[locale],
+                "article_path": ARTICLE_PATHS[locale], "section_path": SECTION_PATHS[locale],
                 "og_locale": OG_LOCALES[locale],
                 "nav_label": NAV_LABELS[locale],
                 "stage_sticker": escape(copy["stage.sticker"]).replace("\n", "<br />"),

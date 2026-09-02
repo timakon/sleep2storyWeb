@@ -1976,7 +1976,7 @@ p {
     font-size: 18px;
   }
 
-  .header-actions .variant-link {
+  .header-actions .variant-link:not(.guides-link) {
     display: none;
   }
 
@@ -2111,6 +2111,55 @@ p {
 
   .proof-line span:last-child {
     border-bottom: 0;
+  }
+}
+
+@media (max-width: 320px) {
+  body {
+    min-width: 0;
+  }
+
+  .v3-header {
+    padding-inline: 8px;
+    gap: 6px;
+  }
+
+  .brand span,
+  .locale-switcher summary svg {
+    display: none;
+  }
+
+  .header-actions {
+    gap: 6px;
+  }
+
+  .header-actions .variant-link {
+    padding-inline: 8px;
+    font-size: 10px;
+  }
+
+  .locale-switcher summary {
+    min-width: 44px;
+    padding-inline: 6px;
+  }
+
+  .v3-how,
+  .v3-inside,
+  .v3-proof,
+  .v3-consent,
+  .v3-faq,
+  .v3-end {
+    padding-inline: 12px;
+  }
+
+  .v3-how h2,
+  .inside-head h2,
+  .v3-proof h2,
+  .v3-consent h2,
+  .v3-faq h2,
+  .v3-end h2 {
+    overflow-wrap: anywhere;
+    font-size: clamp(26px, 11vw, 32px);
   }
 }
 

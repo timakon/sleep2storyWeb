@@ -176,8 +176,9 @@ def check(output: Path) -> None:
         } == expected_locale_links
         assert (f"{route}#how", "") in facts.links
         assert (ARTICLE_PATHS[locale], "") in facts.links
+        assert (SECTION_PATHS[locale], "") in facts.links
         assert all(
-            href == ARTICLE_PATHS[locale] or href.startswith(f"{route}#")
+            href in {ARTICLE_PATHS[locale], SECTION_PATHS[locale]} or href.startswith(f"{route}#")
             for href, switched_locale in facts.links
             if href.startswith("/") and not switched_locale
         )
