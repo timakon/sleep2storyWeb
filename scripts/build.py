@@ -249,15 +249,15 @@ def build(output: Path) -> None:
         '<a href="/">Continue to Sleep2Story</a></body></html>\n', encoding="utf-8",
     )
     base_article_copies = load_copies(ARTICLE_CATALOG[0][0])
-    article_copies = [(base_article_copies, ARTICLE_CATALOG[0][1])]
-    for directory, paths in ARTICLE_CATALOG[1:]:
+    article_copies = [(base_article_copies, ARTICLE_CATALOG[0][1], ARTICLE_CATALOG[0][2])]
+    for directory, paths, published_date in ARTICLE_CATALOG[1:]:
         overrides = load_copies(directory)
         merged = {locale: base_article_copies[locale] | overrides[locale] for locale in LOCALES}
-        article_copies.append((merged, paths))
+        article_copies.append((merged, paths, published_date))
     article_template = (ROOT / "site" / "articles" / "how-to-record-bedtime-stories.html").read_text(encoding="utf-8")
     section_template = (ROOT / "site" / "articles" / "index.html").read_text(encoding="utf-8")
     section_alternates = article_hreflang_links(SITE_URL, SECTION_PATHS)
-    for copies_by_locale, paths in article_copies:
+    for copies_by_locale, paths, published_date in article_copies:
         article_alternates = article_hreflang_links(SITE_URL, paths)
         for locale, article_copy in copies_by_locale.items():
             route = paths[locale]
@@ -268,13 +268,18 @@ def build(output: Path) -> None:
                 "locale_path": locale_path(locale), "locale_code": locale.upper(),
                 "section_path": SECTION_PATHS[locale],
                 "og_locale": OG_LOCALES[locale], "styles": css,
-                "structured_data": article_structured_data(SITE_URL, locale, article_copy, paths),
+                "published_date": published_date,
+                "structured_data": article_structured_data(
+                    SITE_URL, locale, article_copy, paths, published_date
+                ),
             })
             article_output = output / route.lstrip("/")
             article_output.mkdir(parents=True)
             (article_output / "index.html").write_text(article_page, encoding="utf-8")
     for locale in LOCALES:
-        localized_articles = [(copies[locale], paths) for copies, paths in article_copies]
+        localized_articles = [
+            (copies[locale], paths) for copies, paths, _ in article_copies
+        ]
         section_route = SECTION_PATHS[locale]
         section_copy = article_copies[0][0][locale]
         section_page = render(section_template, section_copy, {

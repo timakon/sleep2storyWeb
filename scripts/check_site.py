@@ -22,7 +22,13 @@ import sys
 from urllib.parse import urlsplit
 import xml.etree.ElementTree as ET
 
-from articles import ARTICLE_PATHS, GRANDPARENT_PATHS, SECTION_PATHS
+from articles import (
+    ARTICLE_CATALOG,
+    ARTICLE_PATHS,
+    BEDTIME_ROUTINE_PATHS,
+    GRANDPARENT_PATHS,
+    SECTION_PATHS,
+)
 
 
 LOCALES = (
@@ -42,7 +48,7 @@ LOCALES = (
     "tr",
 )
 SITE_URL = "https://sleep2story.com"
-ARTICLE_ROUTE_SETS = (ARTICLE_PATHS, GRANDPARENT_PATHS)
+ARTICLE_ROUTE_SETS = tuple(paths for _, paths, _ in ARTICLE_CATALOG)
 
 
 def locale_path(locale: str) -> str:
@@ -173,7 +179,7 @@ def check(output: Path) -> None:
     assert 'rel="canonical" href="https://sleep2story.com/"' in english_redirect
 
     article_alternates_by_route: dict[str, dict[str, str]] = {}
-    for routes in ARTICLE_ROUTE_SETS:
+    for _, routes, published_date in ARTICLE_CATALOG:
         article_alternates = {
             **{locale: f"{SITE_URL}{path}" for locale, path in routes.items()},
             "x-default": f"{SITE_URL}{routes['en']}",
@@ -204,7 +210,7 @@ def check(output: Path) -> None:
             } == routes
             assert '"@type": "Article"' in article_source
             assert f'"inLanguage": "{locale}"' in article_source
-            assert '"datePublished": "2026-09-02"' in article_source
+            assert f'"datePublished": "{published_date}"' in article_source
             assert (f"{locale_path(locale)}#how", "") in article_facts.links
             assert (SECTION_PATHS[locale], "") in article_facts.links
             assert_local_targets(output, article_facts)
@@ -227,7 +233,8 @@ def check(output: Path) -> None:
         assert "/favicon.ico" in section_facts.resources, f"Missing search favicon in {route}"
         assert (ARTICLE_PATHS[locale], "") in section_facts.links
         assert (GRANDPARENT_PATHS[locale], "") in section_facts.links
-        assert '"numberOfItems": 2' in section_path.read_text(encoding="utf-8")
+        assert (BEDTIME_ROUTINE_PATHS[locale], "") in section_facts.links
+        assert '"numberOfItems": 3' in section_path.read_text(encoding="utf-8")
         assert_local_targets(output, section_facts)
 
     sitemap = ET.parse(output / "sitemap.xml").getroot()

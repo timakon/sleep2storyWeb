@@ -38,9 +38,26 @@ GRANDPARENT_PATHS: Final[Mapping[str, str]] = MappingProxyType({
     "ro": "/ro/ghiduri/bunici-inregistreze-povesti-pentru-nepoti/",
     "tr": "/tr/rehber/buyukanne-dede-torunlar-icin-masal-kaydetme/",
 })
-ARTICLE_CATALOG: Final[tuple[tuple[str, Mapping[str, str]], ...]] = (
-    ("article-locales", ARTICLE_PATHS),
-    ("grandparent-article-locales", GRANDPARENT_PATHS),
+BEDTIME_ROUTINE_PATHS: Final[Mapping[str, str]] = MappingProxyType({
+    "en": "/guides/bedtime-stories-for-kids-calm-routine/",
+    "ru": "/ru/guides/skazki-na-noch-dlya-detey-spokoinyy-ritual/",
+    "de": "/de/ratgeber/gute-nacht-geschichten-kinder-abendroutine/",
+    "uk": "/uk/porady/kazky-na-nich-dlia-ditei-vechirnii-rytual/",
+    "pl": "/pl/poradniki/bajki-na-dobranoc-dla-dzieci-wieczorny-rytual/",
+    "sr": "/sr/vodici/price-za-laku-noc-za-decu-vecernja-rutina/",
+    "fr": "/fr/guides/histoires-du-soir-enfants-rituel-coucher/",
+    "es": "/es/guias/cuentos-para-dormir-ninos-rutina-nocturna/",
+    "it": "/it/guide/storie-buonanotte-bambini-routine-serale/",
+    "pt": "/pt/guias/historias-para-dormir-criancas-rotina-noturna/",
+    "nl": "/nl/gidsen/verhaaltjes-voor-het-slapengaan-routine/",
+    "cs": "/cs/pruvodce/pohadky-na-dobrou-noc-pro-deti-vecerni-ritual/",
+    "ro": "/ro/ghiduri/povesti-de-seara-pentru-copii-rutina/",
+    "tr": "/tr/rehber/cocuklar-icin-uyku-masallari-aksam-rutini/",
+})
+ARTICLE_CATALOG: Final[tuple[tuple[str, Mapping[str, str], str], ...]] = (
+    ("article-locales", ARTICLE_PATHS, "2026-09-02"),
+    ("grandparent-article-locales", GRANDPARENT_PATHS, "2026-09-02"),
+    ("bedtime-routine-article-locales", BEDTIME_ROUTINE_PATHS, "2026-09-04"),
 )
 SECTION_PATHS: Final[Mapping[str, str]] = MappingProxyType({
     locale: path.rsplit("/", 2)[0] + "/" for locale, path in ARTICLE_PATHS.items()
@@ -77,7 +94,11 @@ def locale_links(
 
 
 def structured_data(
-    site_url: str, locale: str, copy: Mapping[str, str], paths: Mapping[str, str],
+    site_url: str,
+    locale: str,
+    copy: Mapping[str, str],
+    paths: Mapping[str, str],
+    published_date: str,
 ) -> str:
     canonical = f"{site_url}{paths[locale]}"
     article = {
@@ -86,8 +107,8 @@ def structured_data(
         "headline": copy["meta.og_title"],
         "description": copy["schema.description"],
         "image": f"{site_url}/assets/og-{locale}.jpg",
-        "datePublished": "2026-09-02",
-        "dateModified": "2026-09-02",
+        "datePublished": published_date,
+        "dateModified": published_date,
         "inLanguage": locale,
         "mainEntityOfPage": canonical,
         "author": {"@type": "Organization", "name": copy["byline.author"]},
@@ -133,7 +154,7 @@ def section_structured_data(
 
 def sitemap_entries(site_url: str) -> str:
     entries: list[str] = []
-    for paths in (SECTION_PATHS, *(paths for _, paths in ARTICLE_CATALOG)):
+    for paths in (SECTION_PATHS, *(paths for _, paths, _ in ARTICLE_CATALOG)):
         alternates = "\n".join(
             f'    <xhtml:link rel="alternate" hreflang="{locale}" href="{url}" />'
             for locale, url in alternate_urls(site_url, paths).items()
