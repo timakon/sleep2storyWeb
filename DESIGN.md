@@ -85,6 +85,12 @@ Accent colors carry product meaning and interaction. No generic purple/blue SaaS
 - Accessibility: fixed intrinsic dimensions prevent layout shift. Screenshot language is stated when it differs from page language.
 - Layout: cropped phone frame; never used as a fake replacement for interactive controls.
 
+### Guide illustration and example phrases
+
+- A landscape editorial image uses intrinsic dimensions, a responsive source set, a 2px ink outline and a 14px muted caption.
+- Example phrases use a semantic definition list with the existing paper-mid surface, amber accent border and 8px spacing rhythm.
+- These are article content, with no new interactions or color tokens.
+
 ### FAQ disclosure
 
 - Structure: native `details` and `summary`.

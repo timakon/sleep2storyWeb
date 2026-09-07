@@ -54,10 +54,27 @@ BEDTIME_ROUTINE_PATHS: Final[Mapping[str, str]] = MappingProxyType({
     "ro": "/ro/ghiduri/povesti-de-seara-pentru-copii-rutina/",
     "tr": "/tr/rehber/cocuklar-icin-uyku-masallari-aksam-rutini/",
 })
-ARTICLE_CATALOG: Final[tuple[tuple[str, Mapping[str, str], str], ...]] = (
-    ("article-locales", ARTICLE_PATHS, "2026-09-02"),
-    ("grandparent-article-locales", GRANDPARENT_PATHS, "2026-09-02"),
-    ("bedtime-routine-article-locales", BEDTIME_ROUTINE_PATHS, "2026-09-04"),
+TIRED_PARENT_PATHS: Final[Mapping[str, str]] = MappingProxyType({
+    "en": "/guides/too-tired-to-read-bedtime-stories/",
+    "ru": "/ru/guides/net-sil-chitat-skazku-na-noch/",
+    "de": "/de/ratgeber/zu-muede-zum-vorlesen/",
+    "uk": "/uk/porady/nemaie-syl-chytaty-kazku-na-nich/",
+    "pl": "/pl/poradniki/brak-sily-na-czytanie-bajki/",
+    "sr": "/sr/vodici/nema-snage-za-pricu-za-laku-noc/",
+    "fr": "/fr/guides/trop-fatigue-pour-lire-histoire-du-soir/",
+    "es": "/es/guias/demasiado-cansado-para-leer-cuentos/",
+    "it": "/it/guide/troppo-stanchi-per-leggere-la-storia-della-buonanotte/",
+    "pt": "/pt/guias/sem-energia-para-ler-historia-ao-deitar/",
+    "nl": "/nl/gidsen/te-moe-om-voor-te-lezen/",
+    "cs": "/cs/pruvodce/moc-unaveni-na-cteni-pohadky/",
+    "ro": "/ro/ghiduri/prea-obosit-sa-citesti-povestea-de-seara/",
+    "tr": "/tr/rehber/masal-okuyamayacak-kadar-yorgun-olmak/",
+})
+ARTICLE_CATALOG: Final[tuple[tuple[str, Mapping[str, str], str, str], ...]] = (
+    ("article-locales", ARTICLE_PATHS, "2026-09-02", "how-to-record-bedtime-stories.html"),
+    ("grandparent-article-locales", GRANDPARENT_PATHS, "2026-09-02", "how-to-record-bedtime-stories.html"),
+    ("bedtime-routine-article-locales", BEDTIME_ROUTINE_PATHS, "2026-09-04", "how-to-record-bedtime-stories.html"),
+    ("tired-parent-article-locales", TIRED_PARENT_PATHS, "2026-09-07", "tired-parents.html"),
 )
 SECTION_PATHS: Final[Mapping[str, str]] = MappingProxyType({
     locale: path.rsplit("/", 2)[0] + "/" for locale, path in ARTICLE_PATHS.items()
@@ -154,7 +171,7 @@ def section_structured_data(
 
 def sitemap_entries(site_url: str) -> str:
     entries: list[str] = []
-    for paths in (SECTION_PATHS, *(paths for _, paths, _ in ARTICLE_CATALOG)):
+    for paths in (SECTION_PATHS, *(paths for _, paths, _, _ in ARTICLE_CATALOG)):
         alternates = "\n".join(
             f'    <xhtml:link rel="alternate" hreflang="{locale}" href="{url}" />'
             for locale, url in alternate_urls(site_url, paths).items()

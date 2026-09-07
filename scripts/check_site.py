@@ -28,6 +28,7 @@ from articles import (
     BEDTIME_ROUTINE_PATHS,
     GRANDPARENT_PATHS,
     SECTION_PATHS,
+    TIRED_PARENT_PATHS,
 )
 
 
@@ -48,7 +49,7 @@ LOCALES = (
     "tr",
 )
 SITE_URL = "https://sleep2story.com"
-ARTICLE_ROUTE_SETS = tuple(paths for _, paths, _ in ARTICLE_CATALOG)
+ARTICLE_ROUTE_SETS = tuple(paths for _, paths, _, _ in ARTICLE_CATALOG)
 
 
 def locale_path(locale: str) -> str:
@@ -179,7 +180,7 @@ def check(output: Path) -> None:
     assert 'rel="canonical" href="https://sleep2story.com/"' in english_redirect
 
     article_alternates_by_route: dict[str, dict[str, str]] = {}
-    for _, routes, published_date in ARTICLE_CATALOG:
+    for _, routes, published_date, _ in ARTICLE_CATALOG:
         article_alternates = {
             **{locale: f"{SITE_URL}{path}" for locale, path in routes.items()},
             "x-default": f"{SITE_URL}{routes['en']}",
@@ -213,6 +214,12 @@ def check(output: Path) -> None:
             assert f'"datePublished": "{published_date}"' in article_source
             assert (f"{locale_path(locale)}#how", "") in article_facts.links
             assert (SECTION_PATHS[locale], "") in article_facts.links
+            related_paths = (
+                (ARTICLE_PATHS, BEDTIME_ROUTINE_PATHS, GRANDPARENT_PATHS)
+                if routes is TIRED_PARENT_PATHS else (TIRED_PARENT_PATHS,)
+            )
+            for paths in related_paths:
+                assert (paths[locale], "") in article_facts.links, f"Missing related guide in {route}"
             assert_local_targets(output, article_facts)
 
     section_alternates = {
@@ -234,7 +241,10 @@ def check(output: Path) -> None:
         assert (ARTICLE_PATHS[locale], "") in section_facts.links
         assert (GRANDPARENT_PATHS[locale], "") in section_facts.links
         assert (BEDTIME_ROUTINE_PATHS[locale], "") in section_facts.links
-        assert '"numberOfItems": 3' in section_path.read_text(encoding="utf-8")
+        assert (TIRED_PARENT_PATHS[locale], "") in section_facts.links
+        section_source = section_path.read_text(encoding="utf-8")
+        assert section_source.count('class="guide-index__card"') == 4, f"Expected four guides in {route}"
+        assert '"numberOfItems": 4' in section_source
         assert_local_targets(output, section_facts)
 
     sitemap = ET.parse(output / "sitemap.xml").getroot()
@@ -243,6 +253,7 @@ def check(output: Path) -> None:
         "xhtml": "http://www.w3.org/1999/xhtml",
     }
     urls = {node.text for node in sitemap.findall("s:url/s:loc", namespace)}
+    assert len(sitemap.findall("s:url", namespace)) == 84
     assert urls == {
         *(f"{SITE_URL}{locale_path(locale)}" for locale in LOCALES),
         *(f"{SITE_URL}{route}" for routes in ARTICLE_ROUTE_SETS for route in routes.values()),

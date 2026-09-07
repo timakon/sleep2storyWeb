@@ -23,7 +23,7 @@ import shutil
 import sys
 from typing import Final
 
-from articles import ARTICLE_CATALOG, ARTICLE_PATHS, SECTION_PATHS, hreflang_links as article_hreflang_links, locale_links as article_locale_links, section_cards, section_structured_data
+from articles import ARTICLE_CATALOG, ARTICLE_PATHS, BEDTIME_ROUTINE_PATHS, GRANDPARENT_PATHS, SECTION_PATHS, TIRED_PARENT_PATHS, hreflang_links as article_hreflang_links, locale_links as article_locale_links, section_cards, section_structured_data
 from articles import sitemap_entries as article_sitemap_entries, structured_data as article_structured_data
 
 
@@ -249,15 +249,15 @@ def build(output: Path) -> None:
         '<a href="/">Continue to Sleep2Story</a></body></html>\n', encoding="utf-8",
     )
     base_article_copies = load_copies(ARTICLE_CATALOG[0][0])
-    article_copies = [(base_article_copies, ARTICLE_CATALOG[0][1], ARTICLE_CATALOG[0][2])]
-    for directory, paths, published_date in ARTICLE_CATALOG[1:]:
+    article_copies = [(base_article_copies, *ARTICLE_CATALOG[0][1:])]
+    for directory, paths, published_date, template_name in ARTICLE_CATALOG[1:]:
         overrides = load_copies(directory)
         merged = {locale: base_article_copies[locale] | overrides[locale] for locale in LOCALES}
-        article_copies.append((merged, paths, published_date))
-    article_template = (ROOT / "site" / "articles" / "how-to-record-bedtime-stories.html").read_text(encoding="utf-8")
+        article_copies.append((merged, paths, published_date, template_name))
     section_template = (ROOT / "site" / "articles" / "index.html").read_text(encoding="utf-8")
     section_alternates = article_hreflang_links(SITE_URL, SECTION_PATHS)
-    for copies_by_locale, paths, published_date in article_copies:
+    for copies_by_locale, paths, published_date, template_name in article_copies:
+        article_template = (ROOT / "site" / "articles" / template_name).read_text(encoding="utf-8")
         article_alternates = article_hreflang_links(SITE_URL, paths)
         for locale, article_copy in copies_by_locale.items():
             route = paths[locale]
@@ -267,6 +267,8 @@ def build(output: Path) -> None:
                 "locale_links": article_locale_links(locale, LOCALE_NAMES, paths),
                 "locale_path": locale_path(locale), "locale_code": locale.upper(),
                 "section_path": SECTION_PATHS[locale],
+                "recording_path": ARTICLE_PATHS[locale], "routine_path": BEDTIME_ROUTINE_PATHS[locale],
+                "grandparents_path": GRANDPARENT_PATHS[locale], "tired_parent_path": TIRED_PARENT_PATHS[locale],
                 "og_locale": OG_LOCALES[locale], "styles": css,
                 "published_date": published_date,
                 "structured_data": article_structured_data(
@@ -278,7 +280,7 @@ def build(output: Path) -> None:
             (article_output / "index.html").write_text(article_page, encoding="utf-8")
     for locale in LOCALES:
         localized_articles = [
-            (copies[locale], paths) for copies, paths, _ in article_copies
+            (copies[locale], paths) for copies, paths, _, _ in article_copies
         ]
         section_route = SECTION_PATHS[locale]
         section_copy = article_copies[0][0][locale]

@@ -1,0 +1,167 @@
+{
+  "checked_at": "2026-09-06T23:22:02.204Z",
+  "method": "Public HTTPS GET with Node fetch; exact content hashes compared against pre-existing dist; browser separately observed RU auto-redirect and EN article.",
+  "results": [
+    {
+      "status": "fulfilled",
+      "value": {
+        "url": "https://sleep2story.com/",
+        "status": 200,
+        "title": "Sleep2Story — bedtime stories in your family&#x27;s voice",
+        "canonical": "https://sleep2story.com/",
+        "hreflang_count": 15,
+        "local_content_matches": true
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "url": "https://sleep2story.com/robots.txt",
+        "status": 200,
+        "title": null,
+        "canonical": null,
+        "hreflang_count": 0,
+        "local_content_matches": true,
+        "body": "User-agent: *\nAllow: /\n\nSitemap: https://sleep2story.com/sitemap.xml\n"
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "url": "https://sleep2story.com/sitemap.xml",
+        "status": 200,
+        "title": null,
+        "canonical": null,
+        "hreflang_count": 1050,
+        "local_content_matches": true,
+        "sitemap_urls": [
+          "https://sleep2story.com/",
+          "https://sleep2story.com/ru/",
+          "https://sleep2story.com/de/",
+          "https://sleep2story.com/uk/",
+          "https://sleep2story.com/pl/",
+          "https://sleep2story.com/sr/",
+          "https://sleep2story.com/fr/",
+          "https://sleep2story.com/es/",
+          "https://sleep2story.com/it/",
+          "https://sleep2story.com/pt/",
+          "https://sleep2story.com/nl/",
+          "https://sleep2story.com/cs/",
+          "https://sleep2story.com/ro/",
+          "https://sleep2story.com/tr/",
+          "https://sleep2story.com/guides/",
+          "https://sleep2story.com/ru/guides/",
+          "https://sleep2story.com/de/ratgeber/",
+          "https://sleep2story.com/uk/porady/",
+          "https://sleep2story.com/pl/poradniki/",
+          "https://sleep2story.com/sr/vodici/",
+          "https://sleep2story.com/fr/guides/",
+          "https://sleep2story.com/es/guias/",
+          "https://sleep2story.com/it/guide/",
+          "https://sleep2story.com/pt/guias/",
+          "https://sleep2story.com/nl/gidsen/",
+          "https://sleep2story.com/cs/pruvodce/",
+          "https://sleep2story.com/ro/ghiduri/",
+          "https://sleep2story.com/tr/rehber/",
+          "https://sleep2story.com/guides/how-to-record-bedtime-stories/",
+          "https://sleep2story.com/ru/guides/kak-zapisat-skazku-na-noch/",
+          "https://sleep2story.com/de/ratgeber/gute-nacht-geschichten-aufnehmen/",
+          "https://sleep2story.com/uk/porady/yak-zapysaty-kazku-na-nich/",
+          "https://sleep2story.com/pl/poradniki/jak-nagrac-bajke-na-dobranoc/",
+          "https://sleep2story.com/sr/vodici/kako-snimiti-pricu-za-laku-noc/",
+          "https://sleep2story.com/fr/guides/enregistrer-une-histoire-du-soir/",
+          "https://sleep2story.com/es/guias/grabar-cuentos-para-dormir/",
+          "https://sleep2story.com/it/guide/registrare-storie-della-buonanotte/",
+          "https://sleep2story.com/pt/guias/gravar-historias-para-dormir/",
+          "https://sleep2story.com/nl/gidsen/verhaaltje-voor-het-slapengaan-opnemen/",
+          "https://sleep2story.com/cs/pruvodce/jak-nahrat-pohadku-na-dobrou-noc/",
+          "https://sleep2story.com/ro/ghiduri/inregistrare-povesti-de-seara/",
+          "https://sleep2story.com/tr/rehber/uyku-masali-nasil-kaydedilir/",
+          "https://sleep2story.com/guides/grandparents-record-stories-for-grandchildren/",
+          "https://sleep2story.com/ru/guides/babushka-dedushka-zapisat-skazku-dlya-vnukov/",
+          "https://sleep2story.com/de/ratgeber/oma-opa-gute-nacht-geschichte-fuer-enkel-aufnehmen/",
+          "https://sleep2story.com/uk/porady/babusia-didus-zapysaty-kazku-dlia-onukiv/",
+          "https://sleep2story.com/pl/poradniki/babcia-dziadek-nagrac-bajke-dla-wnukow/",
+          "https://sleep2story.com/sr/vodici/baka-deka-snimiti-pricu-za-unuke/",
+          "https://sleep2story.com/fr/guides/grands-parents-enregistrer-histoire-petits-enfants/",
+          "https://sleep2story.com/es/guias/abuelos-grabar-cuentos-para-nietos/",
+          "https://sleep2story.com/it/guide/nonni-registrare-storie-per-nipoti/",
+          "https://sleep2story.com/pt/guias/avos-gravar-historias-para-netos/",
+          "https://sleep2story.com/nl/gidsen/opa-oma-verhaaltje-voor-kleinkind-opnemen/",
+          "https://sleep2story.com/cs/pruvodce/babicka-dedecek-nahrat-pohadku-pro-vnoucata/",
+          "https://sleep2story.com/ro/ghiduri/bunici-inregistreze-povesti-pentru-nepoti/",
+          "https://sleep2story.com/tr/rehber/buyukanne-dede-torunlar-icin-masal-kaydetme/",
+          "https://sleep2story.com/guides/bedtime-stories-for-kids-calm-routine/",
+          "https://sleep2story.com/ru/guides/skazki-na-noch-dlya-detey-spokoinyy-ritual/",
+          "https://sleep2story.com/de/ratgeber/gute-nacht-geschichten-kinder-abendroutine/",
+          "https://sleep2story.com/uk/porady/kazky-na-nich-dlia-ditei-vechirnii-rytual/",
+          "https://sleep2story.com/pl/poradniki/bajki-na-dobranoc-dla-dzieci-wieczorny-rytual/",
+          "https://sleep2story.com/sr/vodici/price-za-laku-noc-za-decu-vecernja-rutina/",
+          "https://sleep2story.com/fr/guides/histoires-du-soir-enfants-rituel-coucher/",
+          "https://sleep2story.com/es/guias/cuentos-para-dormir-ninos-rutina-nocturna/",
+          "https://sleep2story.com/it/guide/storie-buonanotte-bambini-routine-serale/",
+          "https://sleep2story.com/pt/guias/historias-para-dormir-criancas-rotina-noturna/",
+          "https://sleep2story.com/nl/gidsen/verhaaltjes-voor-het-slapengaan-routine/",
+          "https://sleep2story.com/cs/pruvodce/pohadky-na-dobrou-noc-pro-deti-vecerni-ritual/",
+          "https://sleep2story.com/ro/ghiduri/povesti-de-seara-pentru-copii-rutina/",
+          "https://sleep2story.com/tr/rehber/cocuklar-icin-uyku-masallari-aksam-rutini/"
+        ]
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "url": "https://sleep2story.com/guides/",
+        "status": 200,
+        "title": "Bedtime story guides | Sleep2Story",
+        "canonical": "https://sleep2story.com/guides/",
+        "hreflang_count": 15,
+        "local_content_matches": true
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "url": "https://sleep2story.com/guides/how-to-record-bedtime-stories/",
+        "status": 200,
+        "title": "How to Record Bedtime Stories: A Parent’s Guide | Sleep2Story",
+        "canonical": "https://sleep2story.com/guides/how-to-record-bedtime-stories/",
+        "hreflang_count": 15,
+        "local_content_matches": true
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "url": "https://sleep2story.com/guides/grandparents-record-stories-for-grandchildren/",
+        "status": 200,
+        "title": "How Grandparents Can Record Stories for Grandchildren",
+        "canonical": "https://sleep2story.com/guides/grandparents-record-stories-for-grandchildren/",
+        "hreflang_count": 15,
+        "local_content_matches": true
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "url": "https://sleep2story.com/guides/bedtime-stories-for-kids-calm-routine/",
+        "status": 200,
+        "title": "Bedtime Stories for Kids: A Calm Routine Guide | Sleep2Story",
+        "canonical": "https://sleep2story.com/guides/bedtime-stories-for-kids-calm-routine/",
+        "hreflang_count": 15,
+        "local_content_matches": true
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "url": "https://sleep2story.com/de/ratgeber/",
+        "status": 200,
+        "title": "Ratgeber für Gute-Nacht-Geschichten | Sleep2Story",
+        "canonical": "https://sleep2story.com/de/ratgeber/",
+        "hreflang_count": 15,
+        "local_content_matches": true
+      }
+    }
+  ]
+}
