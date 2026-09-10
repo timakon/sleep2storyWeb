@@ -23,7 +23,7 @@
     <script type="application/ld+json">
 {{structured_data}}
     </script>
-    <script src="/assets/site.js" defer></script>
+    <script src="/assets/site.js?v=20260910" defer></script>
   </head>
   <body class="guide guide-index">
     <a class="skip" href="#main">{{skip}}</a>
@@ -68,6 +68,8 @@
     <footer class="simple-footer simple-footer-bold guide-footer">
       <span>Sleep2Story</span>
       <a href="{{locale_path}}">{{footer.back}}</a>
+      <button id="analytics-settings" class="analytics-settings" type="button" aria-controls="analytics-notice" hidden>{{analytics.settings}}</button>
     </footer>
+{{analytics_notice}}
   </body>
 </html>

@@ -35,7 +35,7 @@
     <script type="application/ld+json">
 {{structured_data}}
     </script>
-    <script src="/assets/site.js" defer></script>
+    <script src="/assets/site.js?v=20260910" defer></script>
   </head>
   <body class="v3" data-locale="{{locale}}">
     <a class="skip" href="#main">{{skip}}</a>
@@ -201,6 +201,8 @@
       <p>{{footer.note}}</p>
       <a href="{{article_path}}">{{footer.guide}}</a>
       <a href="{{locale_path}}#privacy">{{footer.consent}}</a>
+      <button id="analytics-settings" class="analytics-settings" type="button" aria-controls="analytics-notice" hidden>{{analytics.settings}}</button>
     </footer>
+{{analytics_notice}}
   </body>
 </html>

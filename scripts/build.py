@@ -183,6 +183,9 @@ def write_sitemap(output: Path) -> None:
 
 def build(output: Path) -> None:
     copies = load_copies("locales")
+    analytics_copies = load_copies("analytics-locales")
+    analytics_template = (ROOT / "site" / "analytics.template.html").read_text(encoding="utf-8")
+    analytics_notices = {locale: render(analytics_template, copy, {}) for locale, copy in analytics_copies.items()}
 
     shutil.rmtree(output, ignore_errors=True)
     output.mkdir(parents=True)
@@ -211,9 +214,10 @@ def build(output: Path) -> None:
         locale_dir.mkdir(parents=True, exist_ok=True)
         page = render(
             template,
-            copy,
+            copy | analytics_copies[locale],
             {
                 "locale": locale,
+                "analytics_notice": analytics_notices[locale],
                 "locale_path": route,
                 "canonical_url": f"{SITE_URL}{route}",
                 "hreflang_links": alternates,
@@ -261,8 +265,9 @@ def build(output: Path) -> None:
         article_alternates = article_hreflang_links(SITE_URL, paths)
         for locale, article_copy in copies_by_locale.items():
             route = paths[locale]
-            article_page = render(article_template, article_copy, {
+            article_page = render(article_template, article_copy | analytics_copies[locale], {
                 "locale": locale, "canonical_url": f"{SITE_URL}{route}",
+                "analytics_notice": analytics_notices[locale],
                 "hreflang_links": article_alternates,
                 "locale_links": article_locale_links(locale, LOCALE_NAMES, paths),
                 "locale_path": locale_path(locale), "locale_code": locale.upper(),
@@ -284,8 +289,9 @@ def build(output: Path) -> None:
         ]
         section_route = SECTION_PATHS[locale]
         section_copy = article_copies[0][0][locale]
-        section_page = render(section_template, section_copy, {
+        section_page = render(section_template, section_copy | analytics_copies[locale], {
             "locale": locale, "canonical_url": f"{SITE_URL}{section_route}",
+            "analytics_notice": analytics_notices[locale],
             "hreflang_links": section_alternates,
             "locale_links": article_locale_links(locale, LOCALE_NAMES, SECTION_PATHS),
             "locale_path": locale_path(locale), "locale_code": locale.upper(),

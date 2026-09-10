@@ -26,6 +26,7 @@ jobs:
         with:
           python-version: "3.13"
       - run: node scripts/check_locale_redirect.mjs
+      - run: node scripts/check_analytics.mjs
       - run: python scripts/build.py
       - run: python scripts/check_site.py
       - uses: actions/configure-pages@v5

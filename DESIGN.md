@@ -97,6 +97,14 @@ Accent colors carry product meaning and interaction. No generic purple/blue SaaS
 - States: closed, open, hover, keyboard focus.
 - Accessibility: native keyboard and screen-reader behavior; answer immediately follows its question.
 
+### Optional analytics notice
+
+- One shared nonmodal region on every canonical page, hidden until JavaScript reads the consent choice. It uses the existing paper surface, ink border and sans-serif text; no backdrop or entrance animation.
+- Fixed to the bottom with 16px gutters, a 760px maximum width, 24px padding (16px on phones), 16px body copy and a 24px heading. The region scrolls within 70% of the viewport height when expanded or zoomed.
+- Allow and decline are equally prominent native buttons, at least 48px tall, with visible keyboard focus. Details use native disclosure. Reading and navigation remain available without a choice.
+- A 44px footer button reopens the notice in the current page language. The two actions and the details text wrap at narrow widths and 200% text zoom.
+- Declining keeps Google Analytics unloaded; withdrawing an earlier choice removes analytics cookies and reloads the page. Advertising features remain disabled.
+
 ### Locale switcher
 
 - Structure: compact globe-and-language summary opening a two-column list of native language names.
