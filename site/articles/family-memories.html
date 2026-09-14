@@ -16,14 +16,13 @@
     <link rel="manifest" href="/site-{{locale}}.webmanifest" />
     <link rel="preload" href="/assets/fonts/Inter-subset.woff2" as="font" type="font/woff2" crossorigin />
     <style>{{styles}}</style>
-
     <meta property="og:locale" content="{{og_locale}}" />
     <meta property="og:type" content="article" />
     <meta property="og:site_name" content="Sleep2Story" />
     <meta property="og:title" content="{{meta.og_title}}" />
     <meta property="og:description" content="{{meta.og_description}}" />
     <meta property="og:url" content="{{canonical_url}}" />
-    <meta property="og:image" content="https://sleep2story.com/assets/og-{{locale}}.jpg" />
+    <meta property="og:image" content="https://sleep2story.com/assets/family-memory-story-og.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="{{meta.image_alt}}" />
@@ -32,24 +31,23 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="{{meta.og_title}}" />
     <meta name="twitter:description" content="{{meta.twitter_description}}" />
-    <meta name="twitter:image" content="https://sleep2story.com/assets/og-{{locale}}.jpg" />
-
+    <meta name="twitter:image" content="https://sleep2story.com/assets/family-memory-story-og.jpg" />
+    <meta name="twitter:image:alt" content="{{meta.image_alt}}" />
     <script type="application/ld+json">
 {{structured_data}}
     </script>
   </head>
   <body class="v3 guide" data-locale="{{locale}}">
     <a class="skip" href="#main">{{skip}}</a>
-
     <header class="v3-header guide-header">
       <a class="brand brand-bold" href="{{locale_path}}" aria-label="{{brand.home}}">
         <img src="/assets/app-icon.svg" width="44" height="44" alt="" />
         <span>Sleep2Story</span>
       </a>
       <nav class="primary-nav" aria-label="{{nav.label}}">
-        <a href="#tonight">{{nav.tonight}}</a>
-        <a href="#voice">{{nav.voice}}</a>
-        <a href="#backup">{{nav.backup}}</a>
+        <a href="#prompts">{{nav.prompts}}</a>
+        <a href="#outline">{{nav.outline}}</a>
+        <a href="#story">{{nav.story}}</a>
       </nav>
       <div class="header-actions">
         <a class="variant-link variant-link-bold guide-home-link" href="{{locale_path}}">{{back_home}}</a>
@@ -61,7 +59,6 @@
         </details>
       </div>
     </header>
-
     <main id="main" tabindex="-1">
       <article>
         <header class="guide-index__hero guide-article-hero">
@@ -82,58 +79,75 @@
           <aside class="guide-toc" aria-label="{{toc.label}}">
             <p class="broadcast-label">{{toc.label}}</p>
             <ol>
-              <li><a href="#tonight">{{toc.tonight}}</a></li>
-              <li><a href="#voice">{{toc.voice}}</a></li>
-              <li><a href="#words">{{toc.words}}</a></li>
-              <li><a href="#backup">{{toc.backup}}</a></li>
+              <li><a href="#memory">{{toc.memory}}</a></li>
+              <li><a href="#prompts">{{toc.prompts}}</a></li>
+              <li><a href="#outline">{{toc.outline}}</a></li>
+              <li><a href="#story">{{toc.story}}</a></li>
+              <li><a href="#adapt">{{toc.adapt}}</a></li>
+              <li><a href="#reading">{{toc.reading}}</a></li>
               <li><a href="#sleep2story">{{toc.product}}</a></li>
               <li><a href="#faq">{{toc.faq}}</a></li>
             </ol>
           </aside>
           <div class="guide-body">
-            <section aria-labelledby="intro-title">
-              <h2 id="intro-title">{{intro.title}}</h2>
-              <p>{{intro.body1}}</p><p>{{intro.body2}}</p>
+            <section id="memory" aria-labelledby="memory-title">
+              <h2 id="memory-title">{{memory.title}}</h2>
+              <p>{{memory.body1}}</p>
+              <p>{{memory.body2}}</p>
+              <p>{{memory.source}} <a href="https://www.pbs.org/parents/crafts-and-experiments/tell-me-a-story-a-caregiving-storybook">{{memory.source_link}}</a>.</p>
+              <p><a href="{{grandparents_path}}">{{memory.grandparents_link}}</a> {{memory.grandparents_body}}</p>
               <figure class="guide-illustration">
-                <img src="/assets/tired-parent-story.webp" srcset="/assets/tired-parent-story-640.webp 640w, /assets/tired-parent-story.webp 1200w" sizes="(max-width: 820px) calc(100vw - 48px), 760px" width="1200" height="800" loading="lazy" alt="{{figure.alt}}" />
+                <img src="/assets/family-memory-story.webp" srcset="/assets/family-memory-story-640.webp 640w, /assets/family-memory-story-800.webp 800w, /assets/family-memory-story.webp 1200w" sizes="(max-width: 820px) calc(100vw - 48px), 760px" width="1200" height="800" loading="lazy" alt="{{figure.alt}}" />
                 <figcaption>{{figure.caption}}</figcaption>
               </figure>
             </section>
-            <section id="tonight" aria-labelledby="tonight-title">
-              <p class="guide-kicker">{{tonight.kicker}}</p>
-              <h2 id="tonight-title">{{tonight.title}}</h2>
-              <p class="guide-lead">{{tonight.lead}}</p>
+            <section id="prompts" aria-labelledby="prompts-title">
+              <p class="guide-kicker">{{prompts.kicker}}</p>
+              <h2 id="prompts-title">{{prompts.title}}</h2>
+              <p class="guide-lead">{{prompts.intro}}</p>
               <ol class="guide-steps">
-                <li><span aria-hidden="true">01</span><div><h3>{{option.1.title}}</h3><p>{{option.1.body1}}</p><p>{{option.1.body2}}</p></div></li>
-                <li><span aria-hidden="true">02</span><div><h3>{{option.2.title}}</h3><p>{{option.2.body1}}</p><p>{{option.2.body2}}</p></div></li>
-                <li><span aria-hidden="true">03</span><div><h3>{{option.3.title}}</h3><p>{{option.3.body1}}</p><p>{{option.3.body2}}</p></div></li>
-                <li><span aria-hidden="true">04</span><div><h3>{{option.4.title}}</h3><p>{{option.4.body1}}</p><p>{{option.4.body2}}</p></div></li>
+                <li><span aria-hidden="true">01</span><div><h3>{{prompt.1.title}}</h3><p>{{prompt.1.body}}</p></div></li>
+                <li><span aria-hidden="true">02</span><div><h3>{{prompt.2.title}}</h3><p>{{prompt.2.body}}</p></div></li>
+                <li><span aria-hidden="true">03</span><div><h3>{{prompt.3.title}}</h3><p>{{prompt.3.body}}</p></div></li>
+                <li><span aria-hidden="true">04</span><div><h3>{{prompt.4.title}}</h3><p>{{prompt.4.body}}</p></div></li>
+                <li><span aria-hidden="true">05</span><div><h3>{{prompt.5.title}}</h3><p>{{prompt.5.body}}</p></div></li>
+                <li><span aria-hidden="true">06</span><div><h3>{{prompt.6.title}}</h3><p>{{prompt.6.body}}</p></div></li>
+                <li><span aria-hidden="true">07</span><div><h3>{{prompt.7.title}}</h3><p>{{prompt.7.body}}</p></div></li>
+                <li><span aria-hidden="true">08</span><div><h3>{{prompt.8.title}}</h3><p>{{prompt.8.body}}</p></div></li>
               </ol>
             </section>
-            <section id="voice" aria-labelledby="voice-title">
-              <h2 id="voice-title">{{voice.title}}</h2>
-              <p>{{voice.body1}} <a href="https://www.nidcd.nih.gov/health/taking-care-your-voice">{{voice.link}}</a>.</p>
-              <p>{{voice.body2}}</p>
-            </section>
-            <section id="words" aria-labelledby="words-title">
-              <h2 id="words-title">{{words.title}}</h2>
-              <p>{{words.intro}}</p>
+            <section id="outline" aria-labelledby="outline-title">
+              <h2 id="outline-title">{{outline.title}}</h2>
+              <p>{{outline.intro}}</p>
               <dl class="guide-scripts">
-                <dt>{{words.1.label}}</dt><dd>{{words.1.text}}</dd>
-                <dt>{{words.2.label}}</dt><dd>{{words.2.text}}</dd>
-                <dt>{{words.3.label}}</dt><dd>{{words.3.text}}</dd>
+                <dt>{{outline.1.label}}</dt><dd>{{outline.1.text}}</dd>
+                <dt>{{outline.2.label}}</dt><dd>{{outline.2.text}}</dd>
+                <dt>{{outline.3.label}}</dt><dd>{{outline.3.text}}</dd>
+                <dt>{{outline.4.label}}</dt><dd>{{outline.4.text}}</dd>
+                <dt>{{outline.5.label}}</dt><dd>{{outline.5.text}}</dd>
               </dl>
-              <p>{{words.end}}</p>
+              <p>{{outline.body}}</p>
             </section>
-            <section id="backup" aria-labelledby="backup-title">
-              <h2 id="backup-title">{{backup.title}}</h2>
-              <p class="guide-lead">{{backup.lead}}</p>
-              <ol class="guide-steps">
-                <li><span aria-hidden="true">01</span><div><h3>{{backup.1.title}}</h3><p>{{backup.1.body}}</p></div></li>
-                <li><span aria-hidden="true">02</span><div><h3>{{backup.2.title}}</h3><p>{{backup.2.body}}</p></div></li>
-                <li><span aria-hidden="true">03</span><div><h3>{{backup.3.title}}</h3><p>{{backup.3.body}}</p></div></li>
-              </ol>
-              <p class="guide-note">{{backup.note}}</p>
+            <section id="story" aria-labelledby="story-title">
+              <p class="guide-kicker">{{story.kicker}}</p>
+              <h2 id="story-title">{{story.title}}</h2>
+              <p class="guide-note">{{story.intro}}</p>
+              <p>{{story.1}}</p><p>{{story.2}}</p><p>{{story.3}}</p><p>{{story.4}}</p>
+              <p>{{story.5}}</p><p>{{story.6}}</p><p>{{story.7}}</p><p>{{story.8}}</p>
+              <p>{{story.9}}</p><p>{{story.10}}</p><p>{{story.11}}</p><p>{{story.12}}</p>
+              <p>{{story.13}}</p><p>{{story.14}}</p><p>{{story.15}}</p><p>{{story.16}}</p>
+            </section>
+            <section id="adapt" aria-labelledby="adapt-title">
+              <h2 id="adapt-title">{{adapt.title}}</h2>
+              <h3>{{adapt.1.title}}</h3><p>{{adapt.1.body}}</p>
+              <h3>{{adapt.2.title}}</h3><p>{{adapt.2.body}}</p>
+              <h3>{{adapt.3.title}}</h3><p>{{adapt.3.body}}</p>
+            </section>
+            <section id="reading" aria-labelledby="reading-title">
+              <h2 id="reading-title">{{reading.title}}</h2>
+              <p>{{reading.body1}}</p>
+              <p>{{reading.body2}} <a href="{{recording_path}}">{{reading.recording_link}}</a>.</p>
+              <p>{{reading.body3}} <a href="{{tired_parent_path}}">{{reading.tired_link}}</a>.</p>
             </section>
           </div>
         </div>
@@ -164,23 +178,18 @@
           <h2 id="links-title">{{links.title}}</h2>
           <ul>
             <li><a href="{{recording_path}}">{{links.record}}</a></li>
-            <li><a href="{{routine_path}}">{{links.routine}}</a></li>
             <li><a href="{{grandparents_path}}">{{links.grandparents}}</a></li>
-            <li><a href="{{family_memory_path}}">{{family_memory_title}}</a></li>
+            <li><a href="{{tired_parent_path}}">{{links.tired}}</a></li>
+            <li><a href="{{routine_path}}">{{links.routine}}</a></li>
           </ul>
         </section>
         <section class="guide-sources" aria-labelledby="sources-title">
           <h2 id="sources-title">{{sources.title}}</h2>
-          <ul>
-            <li><a href="https://www.nidcd.nih.gov/health/taking-care-your-voice">{{sources.nidcd}}</a></li>
-            <li><a href="https://www.healthychildren.org/English/healthy-living/oral-health/Pages/Brush-Book-Bed.aspx">{{sources.aap}}</a></li>
-            <li><a href="https://www.wipo.int/en/web/copyright/faq-copyright">{{sources.wipo}}</a></li>
-          </ul>
+          <ul><li><a href="https://www.pbs.org/parents/crafts-and-experiments/tell-me-a-story-a-caregiving-storybook">{{sources.pbs}}</a></li></ul>
           <p>{{sources.body}}</p>
         </section>
       </article>
     </main>
-
     <footer class="simple-footer simple-footer-bold guide-footer">
       <p>{{footer.note}}</p>
       <a href="{{section_path}}">{{index.available}}</a>

@@ -23,7 +23,7 @@ import shutil
 import sys
 from typing import Final
 
-from articles import ARTICLE_CATALOG, ARTICLE_PATHS, BEDTIME_ROUTINE_PATHS, GRANDPARENT_PATHS, SECTION_PATHS, TIRED_PARENT_PATHS, hreflang_links as article_hreflang_links, locale_links as article_locale_links, section_cards, section_structured_data
+from articles import ARTICLE_CATALOG, ARTICLE_PATHS, BEDTIME_ROUTINE_PATHS, FAMILY_MEMORY_PATHS, GRANDPARENT_PATHS, SECTION_PATHS, TIRED_PARENT_PATHS, hreflang_links as article_hreflang_links, locale_links as article_locale_links, section_cards, section_structured_data
 from articles import sitemap_entries as article_sitemap_entries, structured_data as article_structured_data
 
 
@@ -258,6 +258,7 @@ def build(output: Path) -> None:
         overrides = load_copies(directory)
         merged = {locale: base_article_copies[locale] | overrides[locale] for locale in LOCALES}
         article_copies.append((merged, paths, published_date, template_name))
+    family_memory_copies = next(copies for copies, paths, _, _ in article_copies if paths is FAMILY_MEMORY_PATHS)
     section_template = (ROOT / "site" / "articles" / "index.html").read_text(encoding="utf-8")
     section_alternates = article_hreflang_links(SITE_URL, SECTION_PATHS)
     for copies_by_locale, paths, published_date, template_name in article_copies:
@@ -274,6 +275,8 @@ def build(output: Path) -> None:
                 "section_path": SECTION_PATHS[locale],
                 "recording_path": ARTICLE_PATHS[locale], "routine_path": BEDTIME_ROUTINE_PATHS[locale],
                 "grandparents_path": GRANDPARENT_PATHS[locale], "tired_parent_path": TIRED_PARENT_PATHS[locale],
+                "family_memory_path": FAMILY_MEMORY_PATHS[locale],
+                "family_memory_title": escape(family_memory_copies[locale]["hero.title"]),
                 "og_locale": OG_LOCALES[locale], "styles": css,
                 "published_date": published_date,
                 "structured_data": article_structured_data(

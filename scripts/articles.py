@@ -70,11 +70,28 @@ TIRED_PARENT_PATHS: Final[Mapping[str, str]] = MappingProxyType({
     "ro": "/ro/ghiduri/prea-obosit-sa-citesti-povestea-de-seara/",
     "tr": "/tr/rehber/masal-okuyamayacak-kadar-yorgun-olmak/",
 })
+FAMILY_MEMORY_PATHS: Final[Mapping[str, str]] = MappingProxyType({
+    "en": "/guides/family-story-prompts-for-kids/",
+    "ru": "/ru/guides/kak-prevratit-vospominanie-v-skazku/",
+    "de": "/de/ratgeber/familienerinnerungen-als-geschichte-fuer-kinder/",
+    "uk": "/uk/porady/yak-peretvoryty-spohad-na-kazku/",
+    "pl": "/pl/poradniki/rodzinne-wspomnienia-w-bajce-dla-dziecka/",
+    "sr": "/sr/vodici/porodicne-uspomene-u-prici-za-decu/",
+    "fr": "/fr/guides/souvenirs-de-famille-en-histoire-pour-enfants/",
+    "es": "/es/guias/recuerdos-familiares-en-cuentos-para-ninos/",
+    "it": "/it/guide/ricordi-di-famiglia-in-storie-per-bambini/",
+    "pt": "/pt/guias/memorias-de-familia-em-historias-para-criancas/",
+    "nl": "/nl/gidsen/familieherinneringen-als-verhaal-voor-kinderen/",
+    "cs": "/cs/pruvodce/rodinne-vzpominky-v-pohadce-pro-deti/",
+    "ro": "/ro/ghiduri/amintiri-de-familie-in-povesti-pentru-copii/",
+    "tr": "/tr/rehber/aile-anilarini-cocuklar-icin-masala-donusturme/",
+})
 ARTICLE_CATALOG: Final[tuple[tuple[str, Mapping[str, str], str, str], ...]] = (
     ("article-locales", ARTICLE_PATHS, "2026-09-02", "how-to-record-bedtime-stories.html"),
     ("grandparent-article-locales", GRANDPARENT_PATHS, "2026-09-02", "how-to-record-bedtime-stories.html"),
     ("bedtime-routine-article-locales", BEDTIME_ROUTINE_PATHS, "2026-09-04", "how-to-record-bedtime-stories.html"),
     ("tired-parent-article-locales", TIRED_PARENT_PATHS, "2026-09-07", "tired-parents.html"),
+    ("family-memory-article-locales", FAMILY_MEMORY_PATHS, "2026-09-14", "family-memories.html"),
 )
 SECTION_PATHS: Final[Mapping[str, str]] = MappingProxyType({
     locale: path.rsplit("/", 2)[0] + "/" for locale, path in ARTICLE_PATHS.items()
@@ -123,7 +140,7 @@ def structured_data(
         "@type": "Article",
         "headline": copy["meta.og_title"],
         "description": copy["schema.description"],
-        "image": f"{site_url}/assets/og-{locale}.jpg",
+        "image": copy.get("meta.image_url", f"{site_url}/assets/og-{locale}.jpg"),
         "datePublished": published_date,
         "dateModified": published_date,
         "inLanguage": locale,

@@ -25,8 +25,7 @@ import xml.etree.ElementTree as ET
 from articles import (
     ARTICLE_CATALOG,
     ARTICLE_PATHS,
-    BEDTIME_ROUTINE_PATHS,
-    GRANDPARENT_PATHS,
+    FAMILY_MEMORY_PATHS,
     SECTION_PATHS,
     TIRED_PARENT_PATHS,
 )
@@ -181,6 +180,7 @@ def check(output: Path) -> None:
 
     article_alternates_by_route: dict[str, dict[str, str]] = {}
     for _, routes, published_date, _ in ARTICLE_CATALOG:
+        assert set(routes) == set(LOCALES), "Article routes must cover every locale"
         article_alternates = {
             **{locale: f"{SITE_URL}{path}" for locale, path in routes.items()},
             "x-default": f"{SITE_URL}{routes['en']}",
@@ -202,7 +202,12 @@ def check(output: Path) -> None:
             assert article_facts.description.strip()
             assert article_facts.canonical == f"{SITE_URL}{route}"
             assert article_facts.hreflang == article_alternates
-            assert article_facts.og_image == f"{SITE_URL}/assets/og-{locale}.jpg"
+            expected_image = (
+                f"{SITE_URL}/assets/family-memory-story-og.jpg"
+                if routes is FAMILY_MEMORY_PATHS else f"{SITE_URL}/assets/og-{locale}.jpg"
+            )
+            assert article_facts.og_image == expected_image
+            assert f'"image": "{expected_image}"' in article_source
             assert "/favicon.ico" in article_facts.resources, f"Missing search favicon in {route}"
             assert {
                 switched_locale: href
@@ -215,11 +220,12 @@ def check(output: Path) -> None:
             assert (f"{locale_path(locale)}#how", "") in article_facts.links
             assert (SECTION_PATHS[locale], "") in article_facts.links
             related_paths = (
-                (ARTICLE_PATHS, BEDTIME_ROUTINE_PATHS, GRANDPARENT_PATHS)
-                if routes is TIRED_PARENT_PATHS else (TIRED_PARENT_PATHS,)
+                ARTICLE_ROUTE_SETS if routes in (TIRED_PARENT_PATHS, FAMILY_MEMORY_PATHS)
+                else (TIRED_PARENT_PATHS, FAMILY_MEMORY_PATHS)
             )
             for paths in related_paths:
-                assert (paths[locale], "") in article_facts.links, f"Missing related guide in {route}"
+                if paths is not routes:
+                    assert (paths[locale], "") in article_facts.links, f"Missing related guide in {route}"
             assert_local_targets(output, article_facts)
 
     section_alternates = {
@@ -238,13 +244,11 @@ def check(output: Path) -> None:
         assert section_facts.canonical == f"{SITE_URL}{route}"
         assert section_facts.hreflang == section_alternates
         assert "/favicon.ico" in section_facts.resources, f"Missing search favicon in {route}"
-        assert (ARTICLE_PATHS[locale], "") in section_facts.links
-        assert (GRANDPARENT_PATHS[locale], "") in section_facts.links
-        assert (BEDTIME_ROUTINE_PATHS[locale], "") in section_facts.links
-        assert (TIRED_PARENT_PATHS[locale], "") in section_facts.links
+        for paths in ARTICLE_ROUTE_SETS:
+            assert (paths[locale], "") in section_facts.links
         section_source = section_path.read_text(encoding="utf-8")
-        assert section_source.count('class="guide-index__card"') == 4, f"Expected four guides in {route}"
-        assert '"numberOfItems": 4' in section_source
+        assert section_source.count('class="guide-index__card"') == 5, f"Expected five guides in {route}"
+        assert '"numberOfItems": 5' in section_source
         assert_local_targets(output, section_facts)
 
     sitemap = ET.parse(output / "sitemap.xml").getroot()
@@ -253,7 +257,7 @@ def check(output: Path) -> None:
         "xhtml": "http://www.w3.org/1999/xhtml",
     }
     urls = {node.text for node in sitemap.findall("s:url/s:loc", namespace)}
-    assert len(sitemap.findall("s:url", namespace)) == 84
+    assert len(sitemap.findall("s:url", namespace)) == 98
     assert urls == {
         *(f"{SITE_URL}{locale_path(locale)}" for locale in LOCALES),
         *(f"{SITE_URL}{route}" for routes in ARTICLE_ROUTE_SETS for route in routes.values()),
