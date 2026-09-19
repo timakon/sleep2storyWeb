@@ -86,12 +86,29 @@ FAMILY_MEMORY_PATHS: Final[Mapping[str, str]] = MappingProxyType({
     "ro": "/ro/ghiduri/amintiri-de-familie-in-povesti-pentru-copii/",
     "tr": "/tr/rehber/aile-anilarini-cocuklar-icin-masala-donusturme/",
 })
+PARENT_AWAY_PATHS: Final[Mapping[str, str]] = MappingProxyType({
+    "en": "/guides/bedtime-stories-when-parent-is-away/",
+    "ru": "/ru/guides/skazka-na-noch-kogda-roditel-v-otezde/",
+    "de": "/de/ratgeber/gute-nacht-geschichten-wenn-ein-elternteil-weg-ist/",
+    "uk": "/uk/porady/kazka-na-nich-koly-odyn-iz-batkiv-u-vidryadzhenni/",
+    "pl": "/pl/poradniki/bajka-na-dobranoc-gdy-rodzic-wyjezdza/",
+    "sr": "/sr/vodici/prica-za-laku-noc-kada-je-roditelj-odsutan/",
+    "fr": "/fr/guides/histoire-du-soir-quand-un-parent-est-absent/",
+    "es": "/es/guias/cuentos-para-dormir-cuando-un-padre-esta-lejos/",
+    "it": "/it/guide/storia-buonanotte-quando-un-genitore-e-lontano/",
+    "pt": "/pt/guias/historia-de-embalar-quando-um-dos-pais-esta-longe/",
+    "nl": "/nl/gidsen/bedtijdverhaal-als-een-ouder-weg-is/",
+    "cs": "/cs/pruvodce/pohadka-na-dobrou-noc-kdyz-je-rodic-pryc/",
+    "ro": "/ro/ghiduri/poveste-de-seara-cand-un-parinte-este-plecat/",
+    "tr": "/tr/rehber/ebeveyn-uzaktayken-uyku-masali/",
+})
 ARTICLE_CATALOG: Final[tuple[tuple[str, Mapping[str, str], str, str], ...]] = (
     ("article-locales", ARTICLE_PATHS, "2026-09-02", "how-to-record-bedtime-stories.html"),
     ("grandparent-article-locales", GRANDPARENT_PATHS, "2026-09-02", "how-to-record-bedtime-stories.html"),
     ("bedtime-routine-article-locales", BEDTIME_ROUTINE_PATHS, "2026-09-04", "how-to-record-bedtime-stories.html"),
     ("tired-parent-article-locales", TIRED_PARENT_PATHS, "2026-09-07", "tired-parents.html"),
     ("family-memory-article-locales", FAMILY_MEMORY_PATHS, "2026-09-14", "family-memories.html"),
+    ("parent-away-article-locales", PARENT_AWAY_PATHS, "2026-09-19", "parent-away.html"),
 )
 SECTION_PATHS: Final[Mapping[str, str]] = MappingProxyType({
     locale: path.rsplit("/", 2)[0] + "/" for locale, path in ARTICLE_PATHS.items()

@@ -26,6 +26,7 @@ from articles import (
     ARTICLE_CATALOG,
     ARTICLE_PATHS,
     FAMILY_MEMORY_PATHS,
+    PARENT_AWAY_PATHS,
     SECTION_PATHS,
     TIRED_PARENT_PATHS,
 )
@@ -202,10 +203,12 @@ def check(output: Path) -> None:
             assert article_facts.description.strip()
             assert article_facts.canonical == f"{SITE_URL}{route}"
             assert article_facts.hreflang == article_alternates
-            expected_image = (
-                f"{SITE_URL}/assets/family-memory-story-og.jpg"
-                if routes is FAMILY_MEMORY_PATHS else f"{SITE_URL}/assets/og-{locale}.jpg"
-            )
+            if routes is FAMILY_MEMORY_PATHS:
+                expected_image = f"{SITE_URL}/assets/family-memory-story-og.jpg"
+            elif routes is PARENT_AWAY_PATHS:
+                expected_image = f"{SITE_URL}/assets/parent-away-story-og.jpg"
+            else:
+                expected_image = f"{SITE_URL}/assets/og-{locale}.jpg"
             assert article_facts.og_image == expected_image
             assert f'"image": "{expected_image}"' in article_source
             assert "/favicon.ico" in article_facts.resources, f"Missing search favicon in {route}"
@@ -247,8 +250,8 @@ def check(output: Path) -> None:
         for paths in ARTICLE_ROUTE_SETS:
             assert (paths[locale], "") in section_facts.links
         section_source = section_path.read_text(encoding="utf-8")
-        assert section_source.count('class="guide-index__card"') == 5, f"Expected five guides in {route}"
-        assert '"numberOfItems": 5' in section_source
+        assert section_source.count('class="guide-index__card"') == len(ARTICLE_CATALOG), f"Expected {len(ARTICLE_CATALOG)} guides in {route}"
+        assert f'"numberOfItems": {len(ARTICLE_CATALOG)}' in section_source
         assert_local_targets(output, section_facts)
 
     sitemap = ET.parse(output / "sitemap.xml").getroot()
@@ -257,7 +260,7 @@ def check(output: Path) -> None:
         "xhtml": "http://www.w3.org/1999/xhtml",
     }
     urls = {node.text for node in sitemap.findall("s:url/s:loc", namespace)}
-    assert len(sitemap.findall("s:url", namespace)) == 98
+    assert len(sitemap.findall("s:url", namespace)) == len(LOCALES) * (len(ARTICLE_CATALOG) + 2)
     assert urls == {
         *(f"{SITE_URL}{locale_path(locale)}" for locale in LOCALES),
         *(f"{SITE_URL}{route}" for routes in ARTICLE_ROUTE_SETS for route in routes.values()),
