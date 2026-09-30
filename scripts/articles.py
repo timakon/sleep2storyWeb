@@ -102,6 +102,22 @@ PARENT_AWAY_PATHS: Final[Mapping[str, str]] = MappingProxyType({
     "ro": "/ro/ghiduri/poveste-de-seara-cand-un-parinte-este-plecat/",
     "tr": "/tr/rehber/ebeveyn-uzaktayken-uyku-masali/",
 })
+BILINGUAL_STORY_PATHS: Final[Mapping[str, str]] = MappingProxyType({
+    "en": "/guides/bilingual-bedtime-story-for-kids/",
+    "ru": "/ru/guides/skazka-na-noch-na-dvuh-yazykah/",
+    "de": "/de/ratgeber/zweisprachige-gute-nacht-geschichte-kinder/",
+    "uk": "/uk/porady/kazka-na-nich-dvoma-movamy/",
+    "pl": "/pl/poradniki/bajka-na-dobranoc-w-dwoch-jezykach/",
+    "sr": "/sr/vodici/prica-za-laku-noc-na-dva-jezika/",
+    "fr": "/fr/guides/histoire-du-soir-bilingue-enfant/",
+    "es": "/es/guias/cuento-para-dormir-en-dos-idiomas/",
+    "it": "/it/guide/storia-della-buonanotte-in-due-lingue/",
+    "pt": "/pt/guias/historia-de-embalar-em-duas-linguas/",
+    "nl": "/nl/gidsen/tweetalig-verhaaltje-voor-het-slapengaan/",
+    "cs": "/cs/pruvodce/pohadka-na-dobrou-noc-ve-dvou-jazycich/",
+    "ro": "/ro/ghiduri/poveste-de-seara-in-doua-limbi/",
+    "tr": "/tr/rehber/iki-dilde-uyku-masali/",
+})
 ARTICLE_CATALOG: Final[tuple[tuple[str, Mapping[str, str], str, str], ...]] = (
     ("article-locales", ARTICLE_PATHS, "2026-09-02", "how-to-record-bedtime-stories.html"),
     ("grandparent-article-locales", GRANDPARENT_PATHS, "2026-09-02", "how-to-record-bedtime-stories.html"),
@@ -109,6 +125,7 @@ ARTICLE_CATALOG: Final[tuple[tuple[str, Mapping[str, str], str, str], ...]] = (
     ("tired-parent-article-locales", TIRED_PARENT_PATHS, "2026-09-07", "tired-parents.html"),
     ("family-memory-article-locales", FAMILY_MEMORY_PATHS, "2026-09-14", "family-memories.html"),
     ("parent-away-article-locales", PARENT_AWAY_PATHS, "2026-09-19", "parent-away.html"),
+    ("bilingual-story-article-locales", BILINGUAL_STORY_PATHS, "2026-09-30", "bilingual-story.html"),
 )
 SECTION_PATHS: Final[Mapping[str, str]] = MappingProxyType({
     locale: path.rsplit("/", 2)[0] + "/" for locale, path in ARTICLE_PATHS.items()
