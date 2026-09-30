@@ -23,7 +23,7 @@ import shutil
 import sys
 from typing import Final
 
-from articles import ARTICLE_CATALOG, ARTICLE_PATHS, BEDTIME_ROUTINE_PATHS, BILINGUAL_STORY_PATHS, FAMILY_MEMORY_PATHS, GRANDPARENT_PATHS, PARENT_AWAY_PATHS, SECTION_PATHS, TIRED_PARENT_PATHS, hreflang_links as article_hreflang_links, locale_links as article_locale_links, section_cards, section_structured_data
+from articles import ARTICLE_CATALOG, ARTICLE_PATHS, BEDTIME_ROUTINE_PATHS, BILINGUAL_STORY_OLD_PATHS, BILINGUAL_STORY_PATHS, FAMILY_MEMORY_PATHS, GRANDPARENT_PATHS, PARENT_AWAY_PATHS, SECTION_PATHS, TIRED_PARENT_PATHS, hreflang_links as article_hreflang_links, locale_links as article_locale_links, section_cards, section_structured_data
 from articles import sitemap_entries as article_sitemap_entries, structured_data as article_structured_data
 
 
@@ -292,6 +292,17 @@ def build(output: Path) -> None:
             article_output = output / route.lstrip("/")
             article_output.mkdir(parents=True)
             (article_output / "index.html").write_text(article_page, encoding="utf-8")
+    for locale, old_route in BILINGUAL_STORY_OLD_PATHS.items():
+        new_route = BILINGUAL_STORY_PATHS[locale]
+        redirect_output = output / old_route.lstrip("/")
+        redirect_output.mkdir(parents=True)
+        (redirect_output / "index.html").write_text(
+            f'<!doctype html><html lang="{locale}"><head><meta charset="utf-8">'
+            f'<meta name="robots" content="noindex"><link rel="canonical" href="{SITE_URL}{new_route}">'
+            f'<meta http-equiv="refresh" content="0;url={new_route}"><title>Sleep2Story</title></head>'
+            f'<body><a href="{new_route}">{escape(bilingual_story_copies[locale]["hero.title"])}</a>'
+            '</body></html>\n', encoding="utf-8",
+        )
     for locale in LOCALES:
         localized_articles = [
             (copies[locale], paths) for copies, paths, _, _ in article_copies

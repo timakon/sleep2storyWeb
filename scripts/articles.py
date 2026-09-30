@@ -103,6 +103,22 @@ PARENT_AWAY_PATHS: Final[Mapping[str, str]] = MappingProxyType({
     "tr": "/tr/rehber/ebeveyn-uzaktayken-uyku-masali/",
 })
 BILINGUAL_STORY_PATHS: Final[Mapping[str, str]] = MappingProxyType({
+    "en": "/guides/bedtime-stories-in-different-languages/",
+    "ru": "/ru/guides/skazki-na-noch-na-raznyh-yazykah/",
+    "de": "/de/ratgeber/gute-nacht-geschichten-in-vielen-sprachen/",
+    "uk": "/uk/porady/kazky-na-nich-riznymy-movamy/",
+    "pl": "/pl/poradniki/bajki-na-dobranoc-w-roznych-jezykach/",
+    "sr": "/sr/vodici/price-za-laku-noc-na-razlicitim-jezicima/",
+    "fr": "/fr/guides/histoires-du-soir-en-plusieurs-langues/",
+    "es": "/es/guias/cuentos-para-dormir-en-varios-idiomas/",
+    "it": "/it/guide/storie-della-buonanotte-in-piu-lingue/",
+    "pt": "/pt/guias/historias-de-embalar-em-varias-linguas/",
+    "nl": "/nl/gidsen/bedtijdverhalen-in-verschillende-talen/",
+    "cs": "/cs/pruvodce/pohadky-na-dobrou-noc-v-ruznych-jazycich/",
+    "ro": "/ro/ghiduri/povesti-de-seara-in-mai-multe-limbi/",
+    "tr": "/tr/rehber/farkli-dillerde-uyku-masallari/",
+})
+BILINGUAL_STORY_OLD_PATHS: Final[Mapping[str, str]] = MappingProxyType({
     "en": "/guides/bilingual-bedtime-story-for-kids/",
     "ru": "/ru/guides/skazka-na-noch-na-dvuh-yazykah/",
     "de": "/de/ratgeber/zweisprachige-gute-nacht-geschichte-kinder/",

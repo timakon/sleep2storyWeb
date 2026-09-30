@@ -25,6 +25,8 @@ import xml.etree.ElementTree as ET
 from articles import (
     ARTICLE_CATALOG,
     ARTICLE_PATHS,
+    BILINGUAL_STORY_OLD_PATHS,
+    BILINGUAL_STORY_PATHS,
     FAMILY_MEMORY_PATHS,
     PARENT_AWAY_PATHS,
     SECTION_PATHS,
@@ -178,6 +180,15 @@ def check(output: Path) -> None:
     english_redirect = (output / "en" / "index.html").read_text(encoding="utf-8")
     assert 'name="robots" content="noindex"' in english_redirect
     assert 'rel="canonical" href="https://sleep2story.com/"' in english_redirect
+    assert set(BILINGUAL_STORY_OLD_PATHS) == set(BILINGUAL_STORY_PATHS) == set(LOCALES)
+    for locale, old_route in BILINGUAL_STORY_OLD_PATHS.items():
+        new_route = BILINGUAL_STORY_PATHS[locale]
+        assert old_route != new_route
+        redirect = (output / old_route.lstrip("/") / "index.html").read_text(encoding="utf-8")
+        assert 'name="robots" content="noindex"' in redirect
+        assert f'rel="canonical" href="{SITE_URL}{new_route}"' in redirect
+        assert f'http-equiv="refresh" content="0;url={new_route}"' in redirect
+        assert f'href="{new_route}"' in redirect
 
     article_alternates_by_route: dict[str, dict[str, str]] = {}
     for _, routes, published_date, _ in ARTICLE_CATALOG:

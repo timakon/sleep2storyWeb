@@ -37,7 +37,7 @@
     <a class="skip" href="#main">{{skip}}</a>
     <header class="v3-header guide-header">
       <a class="brand brand-bold" href="{{locale_path}}" aria-label="{{brand.home}}"><img src="/assets/app-icon.svg" width="44" height="44" alt="" /><span>Sleep2Story</span></a>
-      <nav class="primary-nav" aria-label="{{nav.label}}"><a href="#plan">{{plan.title}}</a><a href="#story">{{story.title}}</a><a href="#reading">{{reading.title}}</a></nav>
+      <nav class="primary-nav" aria-label="{{nav.label}}"><a href="#plan">{{nav.plan}}</a><a href="#languages">{{nav.languages}}</a><a href="#story">{{nav.story}}</a></nav>
       <div class="header-actions">
         <a class="variant-link variant-link-bold guide-home-link" href="{{locale_path}}">{{back_home}}</a>
         <details class="locale-switcher guide-language"><summary aria-label="{{language.label}}"><span>{{locale_code}}</span></summary><div class="locale-menu">
@@ -54,13 +54,13 @@
         <section class="guide-answer" aria-labelledby="short-answer"><p class="broadcast-label">{{answer.label}}</p><h2 id="short-answer">{{answer.title}}</h2><p>{{answer.body}}</p></section>
         <div class="guide-layout">
           <aside class="guide-toc" aria-label="{{toc.label}}"><p class="broadcast-label">{{toc.label}}</p><ol>
-            <li><a href="#plan">{{plan.title}}</a></li><li><a href="#story">{{story.title}}</a></li><li><a href="#adapt">{{adapt.title}}</a></li><li><a href="#reading">{{reading.title}}</a></li><li><a href="#sleep2story">{{product.title}}</a></li><li><a href="#faq">{{faq.title}}</a></li>
+            <li><a href="#plan">{{plan.title}}</a></li><li><a href="#languages">{{languages.title}}</a></li><li><a href="#story">{{story.title}}</a></li><li><a href="#adapt">{{adapt.title}}</a></li><li><a href="#reading">{{reading.title}}</a></li><li><a href="#sleep2story">{{product.title}}</a></li><li><a href="#faq">{{faq.title}}</a></li>
           </ol></aside>
           <div class="guide-body">
             <section id="plan" aria-labelledby="plan-title"><h2 id="plan-title">{{plan.title}}</h2><p>{{plan.body1}}</p><p>{{plan.body2}}</p><p>{{plan.body3}}</p></section>
+            <section id="languages" aria-labelledby="languages-title"><h2 id="languages-title">{{languages.title}}</h2><p>{{languages.intro}}</p><p>{{languages.examples}}</p><p>{{languages.note}}</p></section>
             <section id="story" aria-labelledby="story-title"><p class="guide-kicker">{{story.kicker}}</p><h2 id="story-title">{{story.title}}</h2><p>{{story.intro}}</p>
               <h3 lang="{{locale}}">{{story.first_title}}</h3><p lang="{{locale}}">{{story.first_p1}}</p><p lang="{{locale}}">{{story.first_p2}}</p>
-              <h3 lang="{{story.second_lang}}">{{story.second_title}}</h3><p lang="{{story.second_lang}}">{{story.second_p1}}</p><p lang="{{story.second_lang}}">{{story.second_p2}}</p>
             </section>
             <section id="adapt" aria-labelledby="adapt-title"><h2 id="adapt-title">{{adapt.title}}</h2><p>{{adapt.body1}}</p><p>{{adapt.body2}}</p></section>
             <section id="reading" aria-labelledby="reading-title"><h2 id="reading-title">{{reading.title}}</h2><p>{{reading.body1}}</p><p>{{reading.body2}}</p></section>
