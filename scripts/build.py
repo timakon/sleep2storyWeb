@@ -29,24 +29,24 @@ from articles import sitemap_entries as article_sitemap_entries, structured_data
 
 ROOT: Final = Path(__file__).resolve().parent.parent
 SITE_URL: Final = "https://sleep2story.com"
-LOCALES: Final = ("en", "ru", "de", "uk", "pl", "sr", "fr", "es", "it", "pt", "nl", "cs", "ro", "tr")
+LOCALES: Final = ("ru", "en", "zh", "es", "fr", "de", "it", "pt", "ar", "hi", "ja", "ko", "tr", "pl")
 LOCALE_NAMES: Final = {
-    "en": "English", "ru": "Русский", "de": "Deutsch", "uk": "Українська",
-    "pl": "Polski", "sr": "Srpski", "fr": "Français", "es": "Español",
-    "it": "Italiano", "pt": "Português", "nl": "Nederlands", "cs": "Čeština",
-    "ro": "Română", "tr": "Türkçe",
+    "ru": "Русский", "en": "English", "zh": "简体中文", "es": "Español",
+    "fr": "Français", "de": "Deutsch", "it": "Italiano", "pt": "Português",
+    "ar": "العربية", "hi": "हिन्दी", "ja": "日本語", "ko": "한국어",
+    "tr": "Türkçe", "pl": "Polski",
 }
 OG_LOCALES: Final = {
-    "en": "en_US", "ru": "ru_RU", "de": "de_DE", "uk": "uk_UA", "pl": "pl_PL",
-    "sr": "sr_RS", "fr": "fr_FR", "es": "es_ES", "it": "it_IT", "pt": "pt_PT",
-    "nl": "nl_NL", "cs": "cs_CZ", "ro": "ro_RO", "tr": "tr_TR",
+    "ru": "ru_RU", "en": "en_US", "zh": "zh_CN", "es": "es_ES",
+    "fr": "fr_FR", "de": "de_DE", "it": "it_IT", "pt": "pt_PT",
+    "ar": "ar_SA", "hi": "hi_IN", "ja": "ja_JP", "ko": "ko_KR",
+    "tr": "tr_TR", "pl": "pl_PL",
 }
 NAV_LABELS: Final = {
-    "en": "Primary navigation", "ru": "Основная навигация", "de": "Hauptnavigation",
-    "uk": "Основна навігація", "pl": "Główna nawigacja", "sr": "Glavna navigacija",
-    "fr": "Navigation principale", "es": "Navegación principal", "it": "Navigazione principale",
-    "pt": "Navegação principal", "nl": "Hoofdnavigatie", "cs": "Hlavní navigace",
-    "ro": "Navigare principală", "tr": "Ana gezinme",
+    "ru": "Основная навигация", "en": "Primary navigation", "zh": "主导航", "es": "Navegación principal",
+    "fr": "Navigation principale", "de": "Hauptnavigation", "it": "Navigazione principale",
+    "pt": "Navegação principal", "ar": "التنقل الرئيسي", "hi": "मुख्य नेविगेशन",
+    "ja": "メインナビゲーション", "ko": "주요 탐색", "tr": "Ana gezinme", "pl": "Główna nawigacja",
 }
 TOKEN_PATTERN: Final = re.compile(r"{{([a-z0-9_.-]+)}}")
 
@@ -103,7 +103,7 @@ def locale_links(current: str) -> str:
     for locale in LOCALES:
         current_attribute = ' aria-current="page"' if locale == current else ""
         links.append(
-            f'            <a href="{locale_path(locale)}" lang="{locale}" data-locale="{locale}"'
+            f'            <a href="{locale_path(locale)}" lang="{locale}" dir="auto" data-locale="{locale}"'
             f"{current_attribute}>{LOCALE_NAMES[locale]}</a>"
         )
     return "\n".join(links)
@@ -122,7 +122,7 @@ def structured_data(locale: str, copy: dict[str, str]) -> str:
                 "@type": "MobileApplication", "@id": f"{SITE_URL}/#app",
                 "name": "Sleep2Story", "url": page_url,
                 "applicationCategory": "LifestyleApplication", "operatingSystem": "iOS, Android",
-                "inLanguage": ["en", "ru"], "description": copy["meta.og_description"],
+                "inLanguage": list(LOCALES), "description": copy["meta.og_description"],
             },
             {
                 "@type": "FAQPage", "@id": f"{page_url}#faq", "inLanguage": locale,
@@ -203,7 +203,9 @@ def build(output: Path) -> None:
     ]
     css = re.sub(r"/\*.*?\*/", "", css, flags=re.DOTALL)
     css = re.sub(r"\s+", " ", css)
-    css = re.sub(r"\s*([{}:;,])\s*", r"\1", css)
+    # Keep whitespace before pseudo selectors: `html:lang(ar) :is(...)` is a
+    # descendant selector, while removing that space changes its meaning.
+    css = re.sub(r"\s*([{};,])\s*", r"\1", css)
     css = css.strip().replace("../assets/", "/assets/")
 
     template = (ROOT / "site" / "home.template.html").read_text(encoding="utf-8")
@@ -217,6 +219,7 @@ def build(output: Path) -> None:
             copy | analytics_copies[locale],
             {
                 "locale": locale,
+                "direction": "rtl" if locale == "ar" else "ltr",
                 "analytics_notice": analytics_notices[locale],
                 "locale_path": route,
                 "canonical_url": f"{SITE_URL}{route}",
@@ -269,7 +272,7 @@ def build(output: Path) -> None:
         for locale, article_copy in copies_by_locale.items():
             route = paths[locale]
             article_page = render(article_template, article_copy | analytics_copies[locale], {
-                "locale": locale, "canonical_url": f"{SITE_URL}{route}",
+                "locale": locale, "direction": "rtl" if locale == "ar" else "ltr", "canonical_url": f"{SITE_URL}{route}",
                 "analytics_notice": analytics_notices[locale],
                 "hreflang_links": article_alternates,
                 "locale_links": article_locale_links(locale, LOCALE_NAMES, paths),
@@ -310,7 +313,7 @@ def build(output: Path) -> None:
         section_route = SECTION_PATHS[locale]
         section_copy = article_copies[0][0][locale]
         section_page = render(section_template, section_copy | analytics_copies[locale], {
-            "locale": locale, "canonical_url": f"{SITE_URL}{section_route}",
+            "locale": locale, "direction": "rtl" if locale == "ar" else "ltr", "canonical_url": f"{SITE_URL}{section_route}",
             "analytics_notice": analytics_notices[locale],
             "hreflang_links": section_alternates,
             "locale_links": article_locale_links(locale, LOCALE_NAMES, SECTION_PATHS),

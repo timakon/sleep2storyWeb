@@ -31,8 +31,16 @@ function visit({ languages = ["en"], cookie = "", path = "/", referrer = "" } = 
 }
 
 assert.equal(visit({ languages: ["ru-RU", "en-US"] }).redirect, "/ru/");
-assert.equal(visit({ languages: ["sr-Latn-RS"], path: "/#inside" }).redirect, "/sr/#inside");
-assert.equal(visit({ languages: ["ja-JP"] }).redirect, "");
+assert.equal(visit({ languages: ["sr-Latn-RS"], path: "/#inside" }).redirect, "");
+for (const retired of ["uk-UA", "nl-NL", "cs-CZ", "ro-RO"]) {
+  assert.equal(visit({ languages: [retired] }).redirect, "", `${retired} must not redirect to a removed locale`);
+}
+assert.equal(visit({ languages: ["ja-JP"] }).redirect, "/ja/");
+assert.equal(visit({ languages: ["zh-CN"] }).redirect, "/zh/");
+assert.equal(visit({ languages: ["ar-SA"] }).redirect, "/ar/");
+assert.equal(visit({ languages: ["hi-IN"] }).redirect, "/hi/");
+assert.equal(visit({ languages: ["ko-KR"] }).redirect, "/ko/");
+assert.equal(visit({ languages: ["ru-RU"], cookie: "sleep2story_locale=uk" }).redirect, "/ru/");
 assert.equal(visit({ languages: ["ru-RU"], cookie: "sleep2story_locale=en" }).redirect, "");
 assert.equal(visit({ languages: ["ru-RU"], cookie: "sleep2story_locale=de" }).redirect, "/de/");
 assert.equal(visit({ languages: ["ru-RU"], path: "/fr/" }).redirect, "");

@@ -24,7 +24,7 @@
   }
 
   const supportedLocales = new Set([
-    "en", "ru", "de", "uk", "pl", "sr", "fr", "es", "it", "pt", "nl", "cs", "ro", "tr",
+    "ru", "en", "zh", "es", "fr", "de", "it", "pt", "ar", "hi", "ja", "ko", "tr", "pl",
   ]);
   const normalizeLocale = (value) => value?.toLowerCase().split(/[-_]/)[0] || "";
   const savedLocale = normalizeLocale(

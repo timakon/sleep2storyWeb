@@ -35,21 +35,22 @@ from articles import (
 
 
 LOCALES = (
-    "en",
     "ru",
-    "de",
-    "uk",
-    "pl",
-    "sr",
-    "fr",
+    "en",
+    "zh",
     "es",
+    "fr",
+    "de",
     "it",
     "pt",
-    "nl",
-    "cs",
-    "ro",
+    "ar",
+    "hi",
+    "ja",
+    "ko",
     "tr",
+    "pl",
 )
+RETIRED_LOCALES = ("uk", "sr", "nl", "cs", "ro")
 SITE_URL = "https://sleep2story.com"
 ARTICLE_ROUTE_SETS = tuple(paths for _, paths, _, _ in ARTICLE_CATALOG)
 
@@ -63,6 +64,7 @@ class PageFacts:
     """Mutable accumulator populated by the streaming HTML parser."""
 
     language: str = ""
+    direction: str = ""
     title: str = ""
     description: str = ""
     canonical: str = ""
@@ -82,6 +84,7 @@ class FactsParser(HTMLParser):
         values = {key: value or "" for key, value in attrs}
         if tag == "html":
             self.facts.language = values.get("lang", "")
+            self.facts.direction = values.get("dir", "")
         if tag == "title":
             self.facts._in_title = True
         if tag == "meta" and values.get("name") == "description":
@@ -156,6 +159,7 @@ def check(output: Path) -> None:
 
         facts = parse_page(page_path)
         assert facts.language == locale
+        assert facts.direction == ("rtl" if locale == "ar" else "ltr")
         assert facts.title.strip()
         assert facts.description.strip()
         assert facts.canonical == f"{SITE_URL}{route}"
@@ -180,7 +184,8 @@ def check(output: Path) -> None:
     english_redirect = (output / "en" / "index.html").read_text(encoding="utf-8")
     assert 'name="robots" content="noindex"' in english_redirect
     assert 'rel="canonical" href="https://sleep2story.com/"' in english_redirect
-    assert set(BILINGUAL_STORY_OLD_PATHS) == set(BILINGUAL_STORY_PATHS) == set(LOCALES)
+    assert set(BILINGUAL_STORY_OLD_PATHS) == set(LOCALES) - {"zh", "ar", "hi", "ja", "ko"}
+    assert set(BILINGUAL_STORY_PATHS) == set(LOCALES)
     for locale, old_route in BILINGUAL_STORY_OLD_PATHS.items():
         new_route = BILINGUAL_STORY_PATHS[locale]
         assert old_route != new_route
@@ -208,6 +213,7 @@ def check(output: Path) -> None:
             article_facts = parse_page(article_path)
             assert "{{" not in article_source
             assert article_facts.language == locale
+            assert article_facts.direction == ("rtl" if locale == "ar" else "ltr")
             assert article_facts.title.strip()
             assert article_facts.title not in article_titles, f"Untranslated article title in {locale}"
             article_titles.add(article_facts.title)
@@ -252,6 +258,7 @@ def check(output: Path) -> None:
         assert section_path.is_file(), f"Missing guide index {route}"
         section_facts = parse_page(section_path)
         assert section_facts.language == locale
+        assert section_facts.direction == ("rtl" if locale == "ar" else "ltr")
         assert section_facts.title.strip() and section_facts.description.strip()
         assert section_facts.title not in section_titles
         section_titles.add(section_facts.title)
@@ -295,6 +302,10 @@ def check(output: Path) -> None:
     for locale in LOCALES:
         manifest = output / f"site-{locale}.webmanifest"
         assert manifest.is_file(), f"Missing localized manifest for {locale}"
+    for locale in RETIRED_LOCALES:
+        assert not (output / locale).exists(), f"Retired locale still published: {locale}"
+        assert not (output / f"site-{locale}.webmanifest").exists()
+        assert not (output / "assets" / f"og-{locale}.jpg").exists()
 
 
 def main() -> None:
