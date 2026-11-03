@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="robots" content="noindex, follow" />
+    <meta name="description" content="{{description}}" />
+    <link rel="canonical" href="{{canonical_url}}" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" href="/assets/app-icon-512.png" type="image/png" sizes="512x512" />
+    <link rel="apple-touch-icon" href="/assets/app-icon-180.png" />
+    <link rel="preload" href="/assets/fonts/Inter-subset.woff2" as="font" type="font/woff2" crossorigin />
+    <title>{{title}} · Sleep2Story</title>
+    <style>{{styles}}</style>
+  </head>
+  <body class="v3 legal-page">
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="legal-header">
+      <a class="brand brand-bold" href="/" aria-label="Sleep2Story home">
+        <img src="/assets/app-icon-512.png" width="44" height="44" alt="" />
+        <span>Sleep2Story</span>
+      </a>
+      <a class="legal-home" href="/">Back to home <span aria-hidden="true">↗</span></a>
+    </header>
+    <main id="main" class="legal-document">
+      <article>
+        <header class="legal-intro">
+          <p class="broadcast-label">Sleep2Story</p>
+          <h1>{{title}}</h1>
+          <p class="legal-description">{{description}}</p>
+          <p class="legal-updated">Last updated <time datetime="{{operator.updated}}">{{updated_label}}</time></p>
+        </header>
+{{content}}
+      </article>
+    </main>
+    <footer class="simple-footer simple-footer-bold">
+      <p>Sleep2Story</p>
+      {{legal_links}}
+      <button id="analytics-settings" class="analytics-settings" type="button" aria-controls="analytics-notice" hidden>{{analytics.settings}}</button>
+    </footer>
+{{analytics_notice}}
+  </body>
+</html>

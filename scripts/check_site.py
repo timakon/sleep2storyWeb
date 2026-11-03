@@ -20,6 +20,7 @@ from html.parser import HTMLParser
 from pathlib import Path
 import sys
 from urllib.parse import urlsplit
+from urllib.robotparser import RobotFileParser
 import xml.etree.ElementTree as ET
 
 from articles import (
@@ -32,6 +33,7 @@ from articles import (
     SECTION_PATHS,
     TIRED_PARENT_PATHS,
 )
+from legal_pages import LEGAL_ROUTES
 
 
 LOCALES = (
@@ -67,11 +69,13 @@ class PageFacts:
     direction: str = ""
     title: str = ""
     description: str = ""
+    robots: str = ""
     canonical: str = ""
     og_image: str = ""
     hreflang: dict[str, str] = field(default_factory=dict)
     links: list[tuple[str, str]] = field(default_factory=list)
     resources: list[str] = field(default_factory=list)
+    ids: set[str] = field(default_factory=set)
     _in_title: bool = False
 
 
@@ -82,6 +86,8 @@ class FactsParser(HTMLParser):
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         values = {key: value or "" for key, value in attrs}
+        if values.get("id"):
+            self.facts.ids.add(values["id"])
         if tag == "html":
             self.facts.language = values.get("lang", "")
             self.facts.direction = values.get("dir", "")
@@ -89,6 +95,8 @@ class FactsParser(HTMLParser):
             self.facts._in_title = True
         if tag == "meta" and values.get("name") == "description":
             self.facts.description = values.get("content", "")
+        if tag == "meta" and values.get("name") == "robots":
+            self.facts.robots = values.get("content", "")
         if tag == "meta" and values.get("property") == "og:image":
             self.facts.og_image = values.get("content", "")
         if tag == "link" and values.get("rel") == "canonical":
@@ -175,11 +183,12 @@ def check(output: Path) -> None:
         assert (ARTICLE_PATHS[locale], "") in facts.links
         assert (SECTION_PATHS[locale], "") in facts.links
         assert all(
-            href in {ARTICLE_PATHS[locale], SECTION_PATHS[locale]} or href.startswith(f"{route}#")
+            href in {ARTICLE_PATHS[locale], SECTION_PATHS[locale], *LEGAL_ROUTES} or href.startswith(f"{route}#")
             for href, switched_locale in facts.links
             if href.startswith("/") and not switched_locale
         )
         assert_local_targets(output, facts)
+        assert LEGAL_ROUTES <= {href for href, _ in facts.links}, f"Missing legal footer in {route}"
 
     english_redirect = (output / "en" / "index.html").read_text(encoding="utf-8")
     assert 'name="robots" content="noindex"' in english_redirect
@@ -278,6 +287,29 @@ def check(output: Path) -> None:
         "xhtml": "http://www.w3.org/1999/xhtml",
     }
     urls = {node.text for node in sitemap.findall("s:url/s:loc", namespace)}
+    assert not urls.intersection(f"{SITE_URL}{route}" for route in LEGAL_ROUTES), "Legal pages must stay out of the sitemap"
+    robots = (output / "robots.txt").read_text(encoding="utf-8")
+    robots_rules = RobotFileParser()
+    robots_rules.parse(robots.splitlines())
+    assert all(
+        robots_rules.can_fetch(agent, f"{SITE_URL}{route}")
+        for agent in ("*", "Googlebot") for route in LEGAL_ROUTES
+    ), "Keep documents crawlable so noindex can be read"
+    for route in LEGAL_ROUTES:
+        legal_path = output / route.lstrip("/") / "index.html"
+        assert legal_path.is_file(), f"Missing legal route {route}"
+        source = legal_path.read_text(encoding="utf-8")
+        facts = parse_page(legal_path)
+        assert "{{" not in source, f"Unresolved legal token in {route}"
+        assert facts.language == "en" and facts.direction == "ltr"
+        assert facts.title.strip() and facts.description.strip()
+        assert facts.canonical == f"{SITE_URL}{route}"
+        assert facts.robots == "noindex, follow", f"Legal indexing instruction missing in {route}"
+        assert not facts.hreflang, f"English-only documents must not advertise untranslated alternates: {route}"
+        assert LEGAL_ROUTES <= {href for href, _ in facts.links}
+        assert any(href.startswith("mailto:") for href, _ in facts.links), f"Missing public contact in {route}"
+        assert all(href[1:] in facts.ids for href, _ in facts.links if href.startswith("#")), f"Broken document anchor in {route}"
+        assert_local_targets(output, facts)
     assert len(sitemap.findall("s:url", namespace)) == len(LOCALES) * (len(ARTICLE_CATALOG) + 2)
     assert urls == {
         *(f"{SITE_URL}{locale_path(locale)}" for locale in LOCALES),

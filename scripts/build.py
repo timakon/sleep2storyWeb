@@ -25,6 +25,7 @@ from typing import Final
 
 from articles import ARTICLE_CATALOG, ARTICLE_PATHS, BEDTIME_ROUTINE_PATHS, BILINGUAL_STORY_OLD_PATHS, BILINGUAL_STORY_PATHS, FAMILY_MEMORY_PATHS, GRANDPARENT_PATHS, PARENT_AWAY_PATHS, SECTION_PATHS, TIRED_PARENT_PATHS, hreflang_links as article_hreflang_links, locale_links as article_locale_links, section_cards, section_structured_data
 from articles import sitemap_entries as article_sitemap_entries, structured_data as article_structured_data
+from legal_pages import LEGAL_PAGES, footer_links, load_operator
 
 
 ROOT: Final = Path(__file__).resolve().parent.parent
@@ -182,6 +183,7 @@ def write_sitemap(output: Path) -> None:
 
 
 def build(output: Path) -> None:
+    operator = load_operator(ROOT)
     copies = load_copies("locales")
     analytics_copies = load_copies("analytics-locales")
     analytics_template = (ROOT / "site" / "analytics.template.html").read_text(encoding="utf-8")
@@ -201,6 +203,7 @@ def build(output: Path) -> None:
         css_source.index("/* ─────────────────────────────\n   03 · FAMILY BROADCAST") :
         css_source.index("/* ─────────────────────────────\n   COMPARISON HUB")
     ]
+    css += (ROOT / "site" / "legal.css").read_text(encoding="utf-8")
     css = re.sub(r"/\*.*?\*/", "", css, flags=re.DOTALL)
     css = re.sub(r"\s+", " ", css)
     # Keep whitespace before pseudo selectors: `html:lang(ar) :is(...)` is a
@@ -221,6 +224,7 @@ def build(output: Path) -> None:
                 "locale": locale,
                 "direction": "rtl" if locale == "ar" else "ltr",
                 "analytics_notice": analytics_notices[locale],
+                "legal_links": footer_links(),
                 "locale_path": route,
                 "canonical_url": f"{SITE_URL}{route}",
                 "hreflang_links": alternates,
@@ -274,6 +278,7 @@ def build(output: Path) -> None:
             article_page = render(article_template, article_copy | analytics_copies[locale], {
                 "locale": locale, "direction": "rtl" if locale == "ar" else "ltr", "canonical_url": f"{SITE_URL}{route}",
                 "analytics_notice": analytics_notices[locale],
+                "legal_links": footer_links(),
                 "hreflang_links": article_alternates,
                 "locale_links": article_locale_links(locale, LOCALE_NAMES, paths),
                 "locale_path": locale_path(locale), "locale_code": locale.upper(),
@@ -315,6 +320,7 @@ def build(output: Path) -> None:
         section_page = render(section_template, section_copy | analytics_copies[locale], {
             "locale": locale, "direction": "rtl" if locale == "ar" else "ltr", "canonical_url": f"{SITE_URL}{section_route}",
             "analytics_notice": analytics_notices[locale],
+            "legal_links": footer_links(),
             "hreflang_links": section_alternates,
             "locale_links": article_locale_links(locale, LOCALE_NAMES, SECTION_PATHS),
             "locale_path": locale_path(locale), "locale_code": locale.upper(),
@@ -323,6 +329,21 @@ def build(output: Path) -> None:
             "structured_data": section_structured_data(SITE_URL, locale, section_copy, localized_articles),
         })
         (output / section_route.lstrip("/") / "index.html").write_text(section_page, encoding="utf-8")
+    legal_template = (ROOT / "site" / "legal.template.html").read_text(encoding="utf-8")
+    for slug, title, description in LEGAL_PAGES:
+        legal_page = render(legal_template, operator | analytics_copies["en"] | {
+            "title": title, "description": description,
+        }, {
+            "canonical_url": f"{SITE_URL}/{slug}/",
+            "styles": css,
+            "content": (ROOT / "site" / "legal" / f"{slug}.html").read_text(encoding="utf-8"),
+            "legal_links": footer_links(slug),
+            "analytics_notice": analytics_notices["en"],
+        })
+        legal_output = output / slug
+        legal_output.mkdir()
+        (legal_output / "index.html").write_text(legal_page, encoding="utf-8")
+    # Legal pages must remain crawlable so crawlers can read their noindex meta.
     (output / "robots.txt").write_text(f"User-agent: *\nAllow: /\n\nSitemap: {SITE_URL}/sitemap.xml\n", encoding="utf-8")
     write_sitemap(output)
 

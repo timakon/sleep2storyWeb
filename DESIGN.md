@@ -112,6 +112,14 @@ Accent colors carry product meaning and interaction. No generic purple/blue SaaS
 - Accessibility: native language names and a localized group label.
 - Behavior: selection is remembered locally and overrides browser preferences. On the English root only, a first-time visitor is routed to a supported browser locale; unsupported locales fall back to English. Direct localized routes never redirect automatically.
 
+### Legal and support document
+
+- English-only public documents use the existing wordmark, paper/ink/amber-soft tokens, button links and shared footer. They have no promotional poster, imagery or animation.
+- A compact header returns to the English home page. A document title (clamp 40–72px), 18px introduction, update date and a 16px table of contents precede a readable column of at most 760px. Body text is 17px with 1.75 line height; section headings are 28px. Spacing follows the existing 8px rhythm.
+- Each document has one main landmark, one H1 and named section anchors. Contents links and navigation have 44px touch targets; inline text links remain underlined. Long addresses wrap, tables retain semantic headers, and the layout works at 320px and 200% text size.
+- The four pages link to one another and remain available without an account or a cookie choice. They use `noindex, follow`, stay out of the sitemap, and remain crawlable so search engines can read that instruction.
+- Public operator identity and a monitored email are required build inputs. Unconfirmed identity/contact values must not appear in a published document.
+
 ## 6. Motion & Interaction
 
 | Type | Duration | Easing | Usage |
@@ -139,4 +147,4 @@ Strategy: mixed tonal fields plus one strong ink outline. Product screens may us
 | Item | Location | Why accepted | Owner / Exit |
 |---|---|---|---|
 | Product screenshots are available only in English | Localized landing pages | Mobile currently supports English and Russian; fabricating other localized app UIs would misrepresent the product | Add real locale screenshots after Mobile ships the matching locale |
-| Formal legal documents and German Impressum are absent | Footer / legal routes | Backend contains URL contracts but no approved legal text or operator identity | Product owner supplies approved documents and legal entity details before public launch |
+| German Impressum and translations of English legal documents are absent | Legal routes | The initial app release uses English documents; jurisdiction-specific obligations depend on confirmed operator details | Product owner confirms operator obligations and commissions translations where needed |
