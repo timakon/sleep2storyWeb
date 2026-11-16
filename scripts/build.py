@@ -23,7 +23,7 @@ import shutil
 import sys
 from typing import Final
 
-from articles import ARTICLE_CATALOG, ARTICLE_PATHS, BEDTIME_ROUTINE_PATHS, BILINGUAL_STORY_OLD_PATHS, BILINGUAL_STORY_PATHS, FAMILY_MEMORY_PATHS, GRANDPARENT_PATHS, PARENT_AWAY_PATHS, SECTION_PATHS, TIRED_PARENT_PATHS, hreflang_links as article_hreflang_links, locale_links as article_locale_links, section_cards, section_structured_data
+from articles import ARTICLE_CATALOG, ARTICLE_PATHS, BEDTIME_ROUTINE_PATHS, BILINGUAL_STORY_OLD_PATHS, BILINGUAL_STORY_PATHS, FAMILY_MEMORY_PATHS, GRANDPARENT_PATHS, PARENT_AWAY_PATHS, RECORDING_UPDATED, SECTION_PATHS, SEND_STORY_PATHS, TIRED_PARENT_PATHS, hreflang_links as article_hreflang_links, locale_links as article_locale_links, section_cards, section_structured_data
 from articles import sitemap_entries as article_sitemap_entries, structured_data as article_structured_data
 from legal_pages import LEGAL_PAGES, footer_links, load_operator
 
@@ -268,6 +268,9 @@ def build(output: Path) -> None:
     family_memory_copies = next(copies for copies, paths, _, _ in article_copies if paths is FAMILY_MEMORY_PATHS)
     parent_away_copies = next(copies for copies, paths, _, _ in article_copies if paths is PARENT_AWAY_PATHS)
     bilingual_story_copies = next(copies for copies, paths, _, _ in article_copies if paths is BILINGUAL_STORY_PATHS)
+    grandparents_copies = next(copies for copies, paths, _, _ in article_copies if paths is GRANDPARENT_PATHS)
+    send_story_copies = next(copies for copies, paths, _, _ in article_copies if paths is SEND_STORY_PATHS)
+    device_template = (ROOT / "site" / "articles" / "recording-devices.html").read_text(encoding="utf-8")
     section_template = (ROOT / "site" / "articles" / "index.html").read_text(encoding="utf-8")
     section_alternates = article_hreflang_links(SITE_URL, SECTION_PATHS)
     for copies_by_locale, paths, published_date, template_name in article_copies:
@@ -275,6 +278,7 @@ def build(output: Path) -> None:
         article_alternates = article_hreflang_links(SITE_URL, paths)
         for locale, article_copy in copies_by_locale.items():
             route = paths[locale]
+            device_steps = render(device_template, article_copy, {"locale": locale}) if paths is ARTICLE_PATHS else ""
             article_page = render(article_template, article_copy | analytics_copies[locale], {
                 "locale": locale, "direction": "rtl" if locale == "ar" else "ltr", "canonical_url": f"{SITE_URL}{route}",
                 "analytics_notice": analytics_notices[locale],
@@ -284,15 +288,21 @@ def build(output: Path) -> None:
                 "locale_path": locale_path(locale), "locale_code": locale.upper(),
                 "section_path": SECTION_PATHS[locale],
                 "recording_path": ARTICLE_PATHS[locale], "routine_path": BEDTIME_ROUTINE_PATHS[locale],
+                "recording_title": escape(base_article_copies[locale]["meta.og_title"]),
+                "recording_devices": device_steps,
                 "grandparents_path": GRANDPARENT_PATHS[locale], "tired_parent_path": TIRED_PARENT_PATHS[locale],
+                "grandparents_title": escape(grandparents_copies[locale]["meta.og_title"]),
                 "family_memory_path": FAMILY_MEMORY_PATHS[locale],
                 "family_memory_title": escape(family_memory_copies[locale]["hero.title"]),
                 "parent_away_path": PARENT_AWAY_PATHS[locale],
                 "parent_away_title": escape(parent_away_copies[locale]["hero.title"]),
                 "bilingual_story_path": BILINGUAL_STORY_PATHS[locale],
                 "bilingual_story_title": escape(bilingual_story_copies[locale]["hero.title"]),
+                "send_story_path": SEND_STORY_PATHS[locale],
+                "send_story_title": escape(send_story_copies[locale]["index.card_title"]),
                 "og_locale": OG_LOCALES[locale], "styles": css,
                 "published_date": published_date,
+                "modified_date": RECORDING_UPDATED if paths is ARTICLE_PATHS else published_date,
                 "structured_data": article_structured_data(
                     SITE_URL, locale, article_copy, paths, published_date
                 ),

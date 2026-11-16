@@ -1312,6 +1312,17 @@ p {
   font-weight: 560;
 }
 
+.language-suggestion {
+  margin-block-start: 20px;
+}
+
+.language-suggestion a {
+  display: inline-block;
+  padding-block: 8px;
+  font-weight: 750;
+  text-underline-offset: 3px;
+}
+
 .button-ink {
   margin-top: 34px;
   border: 2px solid var(--ink);

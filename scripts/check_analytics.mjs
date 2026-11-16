@@ -37,6 +37,7 @@ function visit({ cookie = "", path = "/ru/", origin = "https://sleep2story.com",
       else cookies.set(key, entry);
     },
     querySelectorAll: () => [localeLink],
+    querySelector: () => null,
     getElementById: (id) => controls[id],
     createElement: (tagName) => ({ tagName }),
     head: { appendChild: (element) => scripts.push(element) },
@@ -137,8 +138,8 @@ assert.ok(returning.writes.some((value) => value.includes("Domain=.sleep2story.c
 const local = visit({ cookie: "sleep2story_analytics=granted", origin: "http://localhost:8765" });
 assert.equal(local.commands().find(([command]) => command === "config")[2].debug_mode, true);
 assert.equal(local.commands().find(([command]) => command === "config")[2].cookie_flags, "SameSite=Lax");
-const redirected = visit({ cookie: "sleep2story_analytics=granted", path: "/", languages: ["ru"] });
-assert.equal(redirected.scripts.length, 0, "The automatic locale redirect cannot send a source-root page_view");
+const englishLanding = visit({ cookie: "sleep2story_analytics=granted", path: "/", languages: ["ru"] });
+assert.equal(englishLanding.scripts.length, 1, "The English landing page remains visible until the visitor picks a language");
 const referral = visit({ cookie: "sleep2story_analytics=granted", path: "/ru/?s2s_referrer=https%3A%2F%2Fnews.example%2Fsecret%3Ftoken%3D123&utm_source=news", referrer: "https://sleep2story.com/" });
 const referralConfig = referral.commands().find(([command]) => command === "config")[2];
 assert.equal(referralConfig.page_referrer, "https://news.example");

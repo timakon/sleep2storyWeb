@@ -1,5 +1,5 @@
 (() => {
-  if (window.sleep2storyRedirecting || window.sleep2storyAnalyticsInitialized) return;
+  if (window.sleep2storyAnalyticsInitialized) return;
   window.sleep2storyAnalyticsInitialized = true;
 
   const measurementId = "G-HXBT0T7YQM";

@@ -44,16 +44,19 @@
   const referrer = window.sleep2storyReferrer;
   const query = [campaign, referrer ? `s2s_referrer=${encodeURIComponent(referrer)}` : ""].filter(Boolean).join("&");
 
+  const localeLinks = [...document.querySelectorAll("a[data-locale]")];
   if (isRoot && preferredLocale !== "en") {
-    if (!savedLocale) {
-      document.cookie = `sleep2story_locale=${preferredLocale}; Max-Age=31536000; Path=/; SameSite=Lax`;
+    const suggestion = document.querySelector("[data-language-suggestion]");
+    const preferredLink = localeLinks.find((link) => link.getAttribute("data-locale") === preferredLocale);
+    if (suggestion && preferredLink) {
+      const link = preferredLink.cloneNode(true);
+      suggestion.appendChild(link);
+      suggestion.hidden = false;
+      localeLinks.push(link);
     }
-    window.sleep2storyRedirecting = true;
-    window.location.replace(`/${preferredLocale}/${query ? `?${query}` : ""}${hash}`);
-    return;
   }
 
-  document.querySelectorAll("a[data-locale]").forEach((link) => {
+  localeLinks.forEach((link) => {
     const destination = `${link.getAttribute("href")}${query ? `?${query}` : ""}`;
     link.setAttribute("href", `${destination}${hash}`);
     link.addEventListener("click", () => {

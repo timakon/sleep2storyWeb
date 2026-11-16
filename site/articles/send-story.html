@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="{{locale}}" dir="{{direction}}">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#ffddb6" />
+    <meta name="color-scheme" content="light dark" />
+    <title>{{meta.title}}</title>
+    <meta name="description" content="{{meta.description}}" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <link rel="canonical" href="{{canonical_url}}" />
+{{hreflang_links}}
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" href="/assets/app-icon.svg" type="image/svg+xml" sizes="any" />
+    <link rel="apple-touch-icon" href="/assets/app-icon-180.png" />
+    <link rel="manifest" href="/site-{{locale}}.webmanifest" />
+    <link rel="preload" href="/assets/fonts/Inter-subset.woff2" as="font" type="font/woff2" crossorigin />
+    <style>{{styles}}</style>
+    <meta property="og:locale" content="{{og_locale}}" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Sleep2Story" />
+    <meta property="og:title" content="{{meta.og_title}}" />
+    <meta property="og:description" content="{{meta.og_description}}" />
+    <meta property="og:url" content="{{canonical_url}}" />
+    <meta property="og:image" content="https://sleep2story.com/assets/og-{{locale}}.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="{{meta.image_alt}}" />
+    <meta property="article:published_time" content="{{published_date}}" />
+    <meta property="article:modified_time" content="{{modified_date}}" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{meta.og_title}}" />
+    <meta name="twitter:description" content="{{meta.og_description}}" />
+    <meta name="twitter:image" content="https://sleep2story.com/assets/og-{{locale}}.jpg" />
+    <script type="application/ld+json">
+{{structured_data}}
+    </script>
+    <script src="/assets/site.js?v=20261116" defer></script>
+  </head>
+  <body class="v3 guide" data-locale="{{locale}}">
+    <a class="skip" href="#main">{{skip}}</a>
+    <header class="v3-header guide-header">
+      <a class="brand brand-bold" href="{{locale_path}}" aria-label="{{brand.home}}">
+        <img src="/assets/app-icon.svg" width="44" height="44" alt="" />
+        <span>Sleep2Story</span>
+      </a>
+      <div class="header-actions">
+        <a class="variant-link variant-link-bold guides-link" href="{{section_path}}">{{index.available}}</a>
+        <details class="locale-switcher guide-language">
+          <summary aria-label="{{language.label}}"><span>{{locale_code}}</span></summary>
+          <div class="locale-menu">
+{{locale_links}}
+          </div>
+        </details>
+      </div>
+    </header>
+    <main id="main" tabindex="-1">
+      <article>
+        <header class="guide-index__hero guide-article-hero">
+          <h1>{{hero.title}}</h1>
+          <p class="guide-dek">{{hero.lead}}</p>
+          <div class="guide-byline">
+            <span>{{byline.author}}</span>
+            <time datetime="{{published_date}}" dir="ltr">{{published_date}}</time>
+          </div>
+        </header>
+        <section class="guide-answer" aria-labelledby="short-answer">
+          <h2 id="short-answer">{{quick.title}}</h2>
+          <p>{{quick.body}}</p>
+        </section>
+        <div class="guide-layout">
+          <nav class="guide-toc" aria-label="{{toc.label}}">
+            <ol>
+              <li><a href="#iphone">{{iphone.title}}</a></li>
+              <li><a href="#android">{{android.title}}</a></li>
+              <li><a href="#send">{{send.title}}</a></li>
+              <li><a href="#handoff">{{handoff.title}}</a></li>
+              <li><a href="#troubleshoot">{{fix.title}}</a></li>
+              <li><a href="#faq">{{faq.title}}</a></li>
+            </ol>
+          </nav>
+          <div class="guide-body">
+            <section id="iphone" aria-labelledby="iphone-title">
+              <h2 id="iphone-title">{{iphone.title}}</h2>
+              <p>{{iphone.p1}}</p>
+              <p>{{iphone.p2}}</p>
+            </section>
+            <section id="android" aria-labelledby="android-title">
+              <h2 id="android-title">{{android.title}}</h2>
+              <p>{{android.p1}}</p>
+              <p>{{android.p2}}</p>
+            </section>
+            <section id="send" aria-labelledby="send-title">
+              <h2 id="send-title">{{send.title}}</h2>
+              <p>{{send.p1}}</p>
+              <p>{{send.p2}}</p>
+            </section>
+            <section id="handoff" aria-labelledby="handoff-title">
+              <h2 id="handoff-title">{{handoff.title}}</h2>
+              <blockquote class="guide-note">{{handoff.example}}</blockquote>
+              <p>{{handoff.check}}</p>
+            </section>
+            <section id="troubleshoot" aria-labelledby="troubleshoot-title">
+              <h2 id="troubleshoot-title">{{fix.title}}</h2>
+              <p>{{fix.p1}}</p>
+              <p>{{fix.p2}}</p>
+            </section>
+          </div>
+        </div>
+        <section class="guide-faq" id="faq" aria-labelledby="faq-title">
+          <h2 id="faq-title">{{faq.title}}</h2>
+          <div>
+            <details><summary>{{faq.q1}}</summary><p>{{faq.a1}}</p></details>
+            <details><summary>{{faq.q2}}</summary><p>{{faq.a2}}</p></details>
+          </div>
+        </section>
+        <section class="guide-sources" aria-labelledby="related-title">
+          <h2 id="related-title">{{related.title}}</h2>
+          <ul>
+            <li><a href="{{recording_path}}">{{recording_title}}</a></li>
+            <li><a href="{{grandparents_path}}">{{grandparents_title}}</a></li>
+            <li><a href="{{parent_away_path}}">{{parent_away_title}}</a></li>
+          </ul>
+          <a class="button button-ink" href="{{locale_path}}#how">{{product.cta}} <span aria-hidden="true">→</span></a>
+        </section>
+        <section class="guide-sources" aria-labelledby="sources-title">
+          <h2 id="sources-title">{{sources.title}}</h2>
+          <ul>
+            <li><a href="https://support.apple.com/en-ie/guide/iphone/iph3d6dc359/ios">{{sources.apple}}</a></li>
+            <li><a href="https://support.google.com/pixelphone/answer/16267696?hl={{locale}}">{{sources.pixel}}</a></li>
+          </ul>
+        </section>
+      </article>
+    </main>
+    <footer class="simple-footer simple-footer-bold guide-footer">
+      <p>{{footer.note}}</p>
+      <a href="{{section_path}}">{{index.available}}</a>
+      <a href="{{locale_path}}">{{footer.back}}</a>
+      {{legal_links}}
+      <button id="analytics-settings" class="analytics-settings" type="button" aria-controls="analytics-notice" hidden>{{analytics.settings}}</button>
+    </footer>
+{{analytics_notice}}
+  </body>
+</html>

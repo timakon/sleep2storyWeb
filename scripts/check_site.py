@@ -29,8 +29,12 @@ from articles import (
     BILINGUAL_STORY_OLD_PATHS,
     BILINGUAL_STORY_PATHS,
     FAMILY_MEMORY_PATHS,
+    GRANDPARENT_PATHS,
     PARENT_AWAY_PATHS,
+    RECORDING_UPDATED,
     SECTION_PATHS,
+    SEND_STORY_PATHS,
+    SEND_STORY_PUBLISHED,
     TIRED_PARENT_PATHS,
 )
 from legal_pages import LEGAL_ROUTES
@@ -248,13 +252,21 @@ def check(output: Path) -> None:
             assert f'"datePublished": "{published_date}"' in article_source
             assert (f"{locale_path(locale)}#how", "") in article_facts.links
             assert (SECTION_PATHS[locale], "") in article_facts.links
-            related_paths = (
-                ARTICLE_ROUTE_SETS if routes in (TIRED_PARENT_PATHS, FAMILY_MEMORY_PATHS)
-                else (TIRED_PARENT_PATHS, FAMILY_MEMORY_PATHS)
-            )
+            if routes in (TIRED_PARENT_PATHS, FAMILY_MEMORY_PATHS):
+                related_paths = ARTICLE_ROUTE_SETS
+            elif routes is SEND_STORY_PATHS:
+                related_paths = (ARTICLE_PATHS, GRANDPARENT_PATHS, PARENT_AWAY_PATHS)
+            elif routes in (ARTICLE_PATHS, GRANDPARENT_PATHS, PARENT_AWAY_PATHS):
+                related_paths = (TIRED_PARENT_PATHS, FAMILY_MEMORY_PATHS, SEND_STORY_PATHS)
+            else:
+                related_paths = (TIRED_PARENT_PATHS, FAMILY_MEMORY_PATHS)
             for paths in related_paths:
                 if paths is not routes:
                     assert (paths[locale], "") in article_facts.links, f"Missing related guide in {route}"
+            assert all(href[1:] in article_facts.ids for href, _ in article_facts.links if href.startswith("#")), f"Broken article anchor in {route}"
+            if routes is ARTICLE_PATHS:
+                assert "phone" in article_facts.ids, f"Missing device instructions in {route}"
+                assert f'"dateModified": "{RECORDING_UPDATED}"' in article_source
             assert_local_targets(output, article_facts)
 
     section_alternates = {
@@ -316,9 +328,15 @@ def check(output: Path) -> None:
         *(f"{SITE_URL}{route}" for routes in ARTICLE_ROUTE_SETS for route in routes.values()),
         *(f"{SITE_URL}{route}" for route in SECTION_PATHS.values()),
     }
+    dated_urls = {
+        **{f"{SITE_URL}{path}": RECORDING_UPDATED for path in ARTICLE_PATHS.values()},
+        **{f"{SITE_URL}{path}": SEND_STORY_PUBLISHED for path in SEND_STORY_PATHS.values()},
+    }
     for entry in sitemap.findall("s:url", namespace):
         location = entry.find("s:loc", namespace)
         assert location is not None
+        if location.text in dated_urls:
+            assert entry.findtext("s:lastmod", namespaces=namespace) == dated_urls[location.text]
         alternates = {
             link.attrib["hreflang"]: link.attrib["href"]
             for link in entry.findall("xhtml:link", namespace)

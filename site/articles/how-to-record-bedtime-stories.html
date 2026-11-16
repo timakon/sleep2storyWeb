@@ -28,7 +28,7 @@
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="{{meta.image_alt}}" />
     <meta property="article:published_time" content="{{published_date}}" />
-    <meta property="article:modified_time" content="{{published_date}}" />
+    <meta property="article:modified_time" content="{{modified_date}}" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="{{meta.og_title}}" />
     <meta name="twitter:description" content="{{meta.twitter_description}}" />
@@ -112,6 +112,7 @@
           </aside>
 
           <div class="guide-body">
+{{recording_devices}}
             <section id="setup" aria-labelledby="setup-title">
               <p class="guide-kicker">{{setup.kicker}}</p>
               <h2 id="setup-title">{{setup.title}}</h2>
@@ -273,6 +274,8 @@
           <p>{{sources.disclaimer}}</p>
           <a href="{{tired_parent_path}}">{{related.tired}}</a>
           <p><a href="{{family_memory_path}}">{{family_memory_title}}</a></p>
+          <p><a href="{{parent_away_path}}">{{parent_away_title}}</a></p>
+          <p><a href="{{send_story_path}}">{{send_story_title}}</a></p>
         </section>
       </article>
     </main>

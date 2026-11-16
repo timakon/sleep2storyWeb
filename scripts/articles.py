@@ -129,6 +129,24 @@ BILINGUAL_STORY_OLD_PATHS: Final[Mapping[str, str]] = MappingProxyType({
     "tr": "/tr/rehber/iki-dilde-uyku-masali/",
     "pl": "/pl/poradniki/bajka-na-dobranoc-w-dwoch-jezykach/",
 })
+SEND_STORY_PATHS: Final[Mapping[str, str]] = MappingProxyType({
+    "ru": "/ru/guides/kak-otpravit-zapis-skazki-na-noch/",
+    "en": "/guides/how-to-send-a-bedtime-story-recording/",
+    "zh": "/zh/zhinan/shuiqian-gushi-luyin-zenme-fa/",
+    "es": "/es/guias/enviar-cuento-para-dormir-grabado/",
+    "fr": "/fr/guides/envoyer-un-enregistrement-histoire-du-soir/",
+    "de": "/de/ratgeber/aufgenommene-gute-nacht-geschichte-verschicken/",
+    "it": "/it/guide/inviare-una-storia-della-buonanotte-registrata/",
+    "pt": "/pt/guias/enviar-gravacao-de-historia-para-dormir/",
+    "ar": "/ar/dalil/irsal-tasjil-qissat-qabl-alnawm/",
+    "hi": "/hi/guide/record-ki-hui-sone-ki-kahani-kaise-bhejen/",
+    "ja": "/ja/guide/rokon-shita-oyasumi-no-ohanashi-o-okuru/",
+    "ko": "/ko/guide/nogeumhan-jamjari-donghwa-bonaegi/",
+    "tr": "/tr/rehber/kaydedilen-uyku-masalini-gonderme/",
+    "pl": "/pl/poradniki/jak-wyslac-nagrana-bajke-na-dobranoc/",
+})
+RECORDING_UPDATED: Final = "2026-11-16"
+SEND_STORY_PUBLISHED: Final = "2026-11-16"
 ARTICLE_CATALOG: Final[tuple[tuple[str, Mapping[str, str], str, str], ...]] = (
     ("article-locales", ARTICLE_PATHS, "2026-09-02", "how-to-record-bedtime-stories.html"),
     ("grandparent-article-locales", GRANDPARENT_PATHS, "2026-09-02", "how-to-record-bedtime-stories.html"),
@@ -137,6 +155,7 @@ ARTICLE_CATALOG: Final[tuple[tuple[str, Mapping[str, str], str, str], ...]] = (
     ("family-memory-article-locales", FAMILY_MEMORY_PATHS, "2026-09-14", "family-memories.html"),
     ("parent-away-article-locales", PARENT_AWAY_PATHS, "2026-09-19", "parent-away.html"),
     ("bilingual-story-article-locales", BILINGUAL_STORY_PATHS, "2026-09-30", "bilingual-story.html"),
+    ("send-story-article-locales", SEND_STORY_PATHS, SEND_STORY_PUBLISHED, "send-story.html"),
 )
 SECTION_PATHS: Final[Mapping[str, str]] = MappingProxyType({
     locale: path.rsplit("/", 2)[0] + "/" for locale, path in ARTICLE_PATHS.items()
@@ -187,7 +206,7 @@ def structured_data(
         "description": copy["schema.description"],
         "image": copy.get("meta.image_url", f"{site_url}/assets/og-{locale}.jpg"),
         "datePublished": published_date,
-        "dateModified": published_date,
+        "dateModified": RECORDING_UPDATED if paths is ARTICLE_PATHS else published_date,
         "inLanguage": locale,
         "mainEntityOfPage": canonical,
         "author": {"@type": "Organization", "name": copy["byline.author"]},
@@ -238,8 +257,13 @@ def sitemap_entries(site_url: str) -> str:
             f'    <xhtml:link rel="alternate" hreflang="{locale}" href="{url}" />'
             for locale, url in alternate_urls(site_url, paths).items()
         )
+        lastmod = ""
+        if paths is ARTICLE_PATHS:
+            lastmod = f"    <lastmod>{RECORDING_UPDATED}</lastmod>\n"
+        elif paths is SEND_STORY_PATHS:
+            lastmod = f"    <lastmod>{SEND_STORY_PUBLISHED}</lastmod>\n"
         entries.extend(
-            f"  <url>\n    <loc>{site_url}{path}</loc>\n{alternates}\n  </url>"
+            f"  <url>\n    <loc>{site_url}{path}</loc>\n{lastmod}{alternates}\n  </url>"
             for path in paths.values()
         )
     return "\n".join(entries)
@@ -256,9 +280,9 @@ def section_cards(
             f'        <a class="guide-index__card" href="{paths[locale]}">\n'
             f'          <span class="guide-index__number" aria-hidden="true">{position:02}</span>\n'
             '          <span class="guide-index__copy">\n'
-            f'            <span class="broadcast-label">{escape(copy["hero.eyebrow"])}</span>\n'
-            f'            <span class="guide-index__title">{escape(copy["meta.og_title"])}</span>\n'
-            f'            <span class="guide-index__summary">{escape(copy["meta.description"])}</span>\n'
+            f'            <span class="broadcast-label">{escape(copy["index.eyebrow"] if paths is SEND_STORY_PATHS else copy["hero.eyebrow"])}</span>\n'
+            f'            <span class="guide-index__title">{escape(copy.get("index.card_title", copy["meta.og_title"]))}</span>\n'
+            f'            <span class="guide-index__summary">{escape(copy.get("index.card_excerpt", copy["meta.description"]))}</span>\n'
             '          </span>\n'
             f'          <span class="guide-index__cta">{escape(read_more)} '
             '<span aria-hidden="true">→</span></span>\n'
